@@ -1,0 +1,20 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Sistema Aerolínea{% endblock %}</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Sistema de Gestión de Aerolínea</h1>
+  <hr>
+  {% block content %}
+  {% endblock %}
+</body>
+</html>
+<!-- templates/base.html -->
+<!-- Este es un archivo base que define la estructura HTML común para todas las páginas del sistema de gestión de aerolínea. -->
+<!-- Incluye un título y un estilo básico. -->

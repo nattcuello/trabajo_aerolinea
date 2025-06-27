@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Asientos del avión {{ avion.modelo }}</h2>
+
+{% for fila, asientos in asientos_por_fila.items %}
+    <div>
+        <strong>Fila {{ fila }}:</strong>
+        {% for asiento in asientos %}
+            <span style="display:inline-block; width:60px; padding:4px; border:1px solid #ccc; margin:2px;
+                         background-color: {% if asiento.estado == 'disponible' %}lightgreen{% elif asiento.estado == 'reservado' %}gold{% else %}lightcoral{% endif %};">
+                {{ asiento.fila }}{{ asiento.columna }}
+            </span>
+        {% endfor %}
+    </div>
+{% endfor %}
+
+{% endblock %}
