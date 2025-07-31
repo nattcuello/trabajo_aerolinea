@@ -1,1 +1,25 @@
-<h1>Detalles del Vuelo</h1> <p><strong>Origen:</strong> {{ vuelo.origen }}</p> <p><strong>Destino:</strong> {{ vuelo.destino }}</p> <p><strong>Salida:</strong> {{ vuelo.fecha_salida }}</p> <p><strong>Llegada:</strong> {{ vuelo.fecha_llegada }}</p> <p><strong>Estado:</strong> {{ vuelo.estado }}</p> <p><strong>Precio Base:</strong> ${{ vuelo.precio_base }}</p> <p><strong>Avión:</strong> {{ vuelo.avion.modelo }}</p>
+<h1>Detalle del Vuelo: {{ vuelo }}</h1>
+
+<p><strong>Origen:</strong> {{ vuelo.origen }}</p>
+<p><strong>Destino:</strong> {{ vuelo.destino }}</p>
+<p><strong>Avión:</strong> {{ vuelo.avion.modelo }}</p>
+
+<h2>Asientos disponibles</h2>
+<ul>
+  {% for asiento in asientos_disponibles %}
+    <li>Asiento {{ asiento.fila }}{{ asiento.columna }} - {{ asiento.tipo }}</li>
+  {% empty %}
+    <li>No hay asientos disponibles.</li>
+  {% endfor %}
+</ul>
+
+<h2>Reservas confirmadas</h2>
+<ul>
+  {% for reserva in vuelo.reservas.all %}
+    {% if reserva.estado == 'confirmada' %}
+      <li>Asiento {{ reserva.asiento.fila }}{{ reserva.asiento.columna }} reservado por {{ reserva.pasajero.nombre }}</li>
+    {% endif %}
+  {% empty %}
+    <li>No hay reservas confirmadas.</li>
+  {% endfor %}
+</ul>
