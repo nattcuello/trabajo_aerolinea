@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'reservas',
     'usuarios',
     'vuelos.apps.VuelosConfig',
+    'home'
 ]
 
 MIDDLEWARE = [

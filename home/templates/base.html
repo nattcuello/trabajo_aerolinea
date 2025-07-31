@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Aerolínea</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        nav {
+            background-color: #004080;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        h1, h2 {
+            color: #004080;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+        }
+        table, th, td {
+            border: 1px solid #999;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'home:index' %}">Inicio</a>
+        {# <a href="{% url 'vuelos:listado_vuelos' %}">Vuelos</a> #}
+        {# <a href="{% url 'pasajeros:lista' %}">Pasajeros</a>#}
+        <a href="{% url 'reservas:lista_reservas' %}">Reservas</a>
+        <a href="{% url 'reservas:crear_reserva' %}">Nueva Reserva</a>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
