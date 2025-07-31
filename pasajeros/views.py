@@ -1,3 +1,5 @@
-from django.shortcuts import render
+# pasajeros/views.py
+from django.http import HttpResponse
 
-# Create your views here.
+def home(request):
+    return HttpResponse("Bienvenido a la sección de pasajeros.")
