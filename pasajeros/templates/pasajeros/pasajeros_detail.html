@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Detalle del Pasajero</h1>
+  <ul>
+    <li><strong>Nombre:</strong> {{ pasajero.nombre }}</li>
+    <li><strong>Tipo de Documento:</strong> {{ pasajero.tipo_documento }}</li>
+    <li><strong>Documento:</strong> {{ pasajero.documento }}</li>
+    <li><strong>Email:</strong> {{ pasajero.email }}</li>
+    <li><strong>Teléfono:</strong> {{ pasajero.telefono }}</li>
+    <li><strong>Fecha de Nacimiento:</strong> {{ pasajero.fecha_nacimiento }}</li>
+    <li><strong>Edad:</strong> {{ pasajero.edad }}</li>
+  </ul>
+{% endblock %}
