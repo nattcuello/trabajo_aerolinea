@@ -1,39 +1,44 @@
-# reservas/models.py
 from django.db import models
-from vuelos.models import Avion
+from pasajeros.models import Pasajero
+from vuelos.models import Vuelo
 
-
+# 👇 Importá Asiento antes de usarlo en Reserva
 class Asiento(models.Model):
-    TIPO_CHOICES = [
+    avion = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name="asientos")  # o Avion si es más correcto
+    fila = models.IntegerField()
+    columna = models.CharField(max_length=1)
+    tipo = models.CharField(max_length=20, choices=[
         ('ventana', 'Ventana'),
         ('pasillo', 'Pasillo'),
-        ('medio', 'Medio'),
-    ]
-
-    ESTADO_CHOICES = [
+        ('medio', 'Medio')
+    ])
+    estado = models.CharField(max_length=20, choices=[
         ('disponible', 'Disponible'),
-        ('reservado', 'Reservado'),
-        ('ocupado', 'Ocupado'),
-    ]
-
-    #El avión al que pertenece el asiento
-    avion = models.ForeignKey(Avion, on_delete=models.CASCADE, related_name='asientos')
-    #Fila y columna del asiento
-    fila = models.PositiveIntegerField()
-    columna = models.CharField(max_length=1)  # A, B, C...
-    #Tipo de asiento (ventana, pasillo, medio)
-    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
-    #Estado del asiento (disponible, reservado, ocupado)
-    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='disponible')
-
-    class Meta: #Asegura que no se repitan posiciones en el mismo avión
-        unique_together = ('avion', 'fila', 'columna')
-        verbose_name = 'Asiento'
-        verbose_name_plural = 'Asientos'
-        ordering = ['avion', 'fila', 'columna']
+        ('ocupado', 'Ocupado')
+    ], default='disponible')
 
     def __str__(self):
-        return f"Asiento {self.fila}{self.columna} - {self.avion.modelo}"
+        return f"Asiento {self.fila}{self.columna} - {self.tipo} ({self.estado})"
 
 
-# Create your models here.
+class Reserva(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('confirmada', 'Confirmada'),
+        ('cancelada', 'Cancelada'),
+    ]
+
+    pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, related_name="reservas")
+    vuelo = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name="reservas")
+    asiento = models.OneToOneField(Asiento, on_delete=models.SET_NULL, null=True, blank=True)
+    fecha_reserva = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    precio_final = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Reserva de {self.pasajero.nombre} en vuelo {self.vuelo.id} ({self.estado})"
+
+    class Meta:
+        verbose_name = "Reserva"
+        verbose_name_plural = "Reservas"
+        ordering = ['-fecha_reserva']

@@ -1,9 +1,6 @@
-#Dado un objeto Avion, generar automáticamente todos sus asientos al crearlo,
-#en base a la cantidad de filas y columnas.
+# reservas/services.py
 
-from .models import Asiento
 from vuelos.models import Avion
-
 
 class AsientoService:
 
@@ -12,6 +9,8 @@ class AsientoService:
         """
         Crea asientos para un avión dado, según sus filas y columnas.
         """
+        from .models import Asiento  # ✅ Import diferido para evitar import circular
+
         letras = [chr(i) for i in range(65, 65 + avion.columnas)]  # A, B, C...
 
         asientos_creados = []
