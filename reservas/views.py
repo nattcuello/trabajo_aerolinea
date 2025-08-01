@@ -37,3 +37,7 @@ def crear_reserva(request, vuelo_id):
         form = ReservaForm(vuelo=vuelo)
 
     return render(request, 'reservas/crear_reserva.html', {'form': form, 'vuelo': vuelo})
+
+def lista_reservas(request):
+    reservas = Reserva.objects.select_related('vuelo', 'pasajero', 'asiento')
+    return render(request, 'reservas/lista_reservas.html', {'reservas': reservas})
