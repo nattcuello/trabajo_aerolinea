@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Aerolínea</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'img/fondo.png' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            min-height: 100vh;
+        }
+        nav {
+            background-color: rgba(0, 64, 128, 0.9);
+            padding: 10px;
+        }
+        nav a, nav span, nav button {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            margin: 30px;
+            border-radius: 10px;
+        }
+        h1, h2 {
+            color: #004080;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+        }
+        table, th, td {
+            border: 1px solid #999;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'home:index' %}">Inicio</a>
+        <a href="{% url 'reservas:lista_reservas' %}">Reservas</a>
+        <a href="{% url 'reservas:crear_reserva' %}">Nueva Reserva</a>
+        <a href="{% url 'listado_pasajeros' %}">Pasajeros</a>
+
+        {% if user.is_authenticated %}
+            <span>Hola, {{ user.username }}</span>
+            <form action="{% url 'usuarios:logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        {% else %}
+            <a href="{% url 'usuarios:login' %}">Iniciar sesión</a>
+            <a href="{% url 'usuarios:registro' %}">Registrarse</a>
+        {% endif %}
+    </nav>
+
+    {% if messages %}
+        <div style="margin: 10px;">
+            {% for message in messages %}
+                <div style="
+                    padding: 10px;
+                    background-color: {% if message.tags == 'success' %}#d4edda{% elif message.tags == 'error' %}#f8d7da{% else %}#cce5ff{% endif %};
+                    color: {% if message.tags == 'success' %}#155724{% elif message.tags == 'error' %}#721c24{% else %}#004085{% endif %};
+                    border: 1px solid;
+                    border-radius: 5px;
+                    margin-bottom: 10px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

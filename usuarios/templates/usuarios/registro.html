@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Registrar Usuario</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <fieldset>
+      <legend>Datos de Usuario</legend>
+      {{ user_form.as_p }}
+    </fieldset>
+
+    <fieldset>
+      <legend>Rol del Usuario</legend>
+      {{ perfil_form.as_p }}
+    </fieldset>
+
+    <button type="submit">Registrar</button>
+  </form>
+{% endblock %}
+
