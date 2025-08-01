@@ -1,0 +1,6 @@
+<h1>Lista de vuelos</h1>
+<ul>
+  {% for vuelo in vuelos %}
+    <li><a href="{% url 'vuelo_detail' vuelo.id %}">Vuelo {{ vuelo.id }}</a></li>
+  {% endfor %}
+</ul>

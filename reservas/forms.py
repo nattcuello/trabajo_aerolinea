@@ -1,15 +1,17 @@
 from django import forms
 from .models import Reserva, Asiento
-from vuelos.models import Vuelo
 from pasajeros.models import Pasajero
 
 class ReservaForm(forms.ModelForm):
+    pasajero = forms.ModelChoiceField(queryset=Pasajero.objects.all())
+    asiento = forms.ModelChoiceField(queryset=Asiento.objects.none())
+
     class Meta:
         model = Reserva
-        fields = ['pasajero', 'vuelo', 'asiento', 'precio_final']
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        fields = ['pasajero', 'asiento']
 
-        # Solo mostrar asientos disponibles
-        self.fields['asiento'].queryset = Asiento.objects.filter(estado='disponible')
+    def __init__(self, *args, vuelo=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if vuelo:
+            # Solo asientos disponibles del avión del vuelo
+            self.fields['asiento'].queryset = vuelo.avion.asientos.filter(estado='disponible')
