@@ -6,6 +6,7 @@ urlpatterns = [
     path('vuelos/', include('vuelos.urls')),
     path('pasajeros/', include('pasajeros.urls')),
     path('reservas/', include('reservas.urls')),
+    path('usuarios/', include('usuarios.urls', namespace='usuarios')),
     path('', include('home.urls')),
 
 

@@ -44,10 +44,19 @@
     <nav>
         <a href="{% url 'home:index' %}">Inicio</a>
         {# <a href="{% url 'vuelos:listado_vuelos' %}">Vuelos</a> #}
-        {# <a href="{% url 'pasajeros:lista' %}">Pasajeros</a>#}
+        {# <a href="{% url 'pasajeros:lista' %}">Pasajeros</a> #}
         <a href="{% url 'reservas:lista_reservas' %}">Reservas</a>
         <a href="{% url 'reservas:crear_reserva' %}">Nueva Reserva</a>
+    
+        {% if user.is_authenticated %}
+            <span style="color: white; margin-left: 20px;">Hola, {{ user.username }}</span>
+            <a href="{% url 'usuarios:logout' %}">Cerrar sesión</a>
+        {% else %}
+            <a href="{% url 'usuarios:login' %}">Iniciar sesión</a>
+            <a href="{% url 'usuarios:registro' %}">Registrarse</a>
+        {% endif %}
     </nav>
+    
 
     {% block content %}
     {% endblock %}
