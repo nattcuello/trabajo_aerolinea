@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 class Pasajero(models.Model):
     TIPO_DOCUMENTO_CHOICES = [
@@ -15,6 +16,13 @@ class Pasajero(models.Model):
     email = models.EmailField()
     telefono = models.CharField(max_length=20)
     fecha_nacimiento = models.DateField()
+
+    @property
+    def edad(self):
+        today = date.today()
+        return today.year - self.fecha_nacimiento.year - (
+            (today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day)
+        )
 
     class Meta:
         verbose_name = 'Pasajero'

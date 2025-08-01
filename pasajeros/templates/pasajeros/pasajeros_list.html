@@ -1,0 +1,32 @@
+<!-- pasajeros/templates/pasajeros/lista.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Listado de Pasajeros</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Tipo Doc</th>
+        <th>Documento</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Fecha Nacimiento</th>
+        <th>Edad</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in pasajeros %}
+        <tr>
+          <td>{{ p.nombre }}</td>
+          <td>{{ p.tipo_documento }}</td>
+          <td>{{ p.documento }}</td>
+          <td>{{ p.email }}</td>
+          <td>{{ p.telefono }}</td>
+          <td>{{ p.fecha_nacimiento }}</td>
+          <td>{{ p.edad }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

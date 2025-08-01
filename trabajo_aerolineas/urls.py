@@ -8,6 +8,7 @@ urlpatterns = [
     path('reservas/', include('reservas.urls')),
     path('usuarios/', include('usuarios.urls', namespace='usuarios')),
     path('', include('home.urls')),
-
+    path('pasajeros/', include('pasajeros.urls')),
+    path('pasajeros/', include('pasajeros.urls')),
 
 ]
