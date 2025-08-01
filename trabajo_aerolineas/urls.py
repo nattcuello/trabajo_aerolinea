@@ -7,6 +7,7 @@ urlpatterns = [
     path('pasajeros/', include('pasajeros.urls')),
     path('reservas/', include('reservas.urls')),
     path('', include('home.urls')),
-
+    path('pasajeros/', include('pasajeros.urls')),
+    path('pasajeros/', include('pasajeros.urls')),
 
 ]

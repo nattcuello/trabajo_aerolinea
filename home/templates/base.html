@@ -44,9 +44,10 @@
     <nav>
         <a href="{% url 'home:index' %}">Inicio</a>
         {# <a href="{% url 'vuelos:listado_vuelos' %}">Vuelos</a> #}
-        {# <a href="{% url 'pasajeros:lista' %}">Pasajeros</a>#}
         <a href="{% url 'reservas:lista_reservas' %}">Reservas</a>
         <a href="{% url 'reservas:crear_reserva' %}">Nueva Reserva</a>
+        <a href="{% url 'listado_pasajeros' %}">Pasajeros</a>
+
     </nav>
 
     {% block content %}
