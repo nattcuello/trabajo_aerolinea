@@ -7,14 +7,15 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('vuelos/', include('vuelos.urls')),
-    path('pasajeros/', include('pasajeros.urls')),
+    path('vuelos/', include(('vuelos.urls', 'vuelos'), namespace='vuelos')),
+    path('pasajeros/', include(('pasajeros.urls', 'pasajeros'), namespace='pasajeros')),
     path('reservas/', include('reservas.urls')),
     path('usuarios/', include('usuarios.urls', namespace='usuarios')),
     path('', include('home.urls')),
-    path('pasajeros/', include('pasajeros.urls')),
-    path('pasajeros/', include('pasajeros.urls')),
+
 ]
+
+
 
 # ✅ Agregá esto tal como está al final del archivo
 if settings.DEBUG:

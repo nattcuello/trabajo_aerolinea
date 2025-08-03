@@ -5,5 +5,9 @@ app_name = 'vuelos'
 
 urlpatterns = [
     path('', views.vuelo_list, name='vuelo_list'),            # /vuelos/
-    path('<int:vuelo_id>/', views.vuelo_detail, name='vuelo_detail'),  # /vuelos/1/
+    path('crear/', views.crear_vuelo, name='crear_vuelo'),
+    path('crear-avion/', views.crear_avion, name='crear_avion'),
+    path('<int:vuelo_id>/', views.vuelo_detail, name='vuelo_detail'), 
+
 ]
+

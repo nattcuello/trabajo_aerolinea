@@ -1,4 +1,3 @@
-<!-- pasajeros/templates/pasajeros/lista.html -->
 {% extends 'base.html' %}
 
 {% block content %}
@@ -29,4 +28,7 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <br>
+  <a href="{% url 'pasajeros:crear_pasajero' %}">Crear pasajero</a>
 {% endblock %}

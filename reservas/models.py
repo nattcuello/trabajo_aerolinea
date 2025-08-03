@@ -36,9 +36,12 @@ class Reserva(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
     precio_final = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
-    def clean(self):
-        if Reserva.objects.filter(vuelo=self.vuelo, pasajero=self.pasajero).exclude(pk=self.pk).exists():
-            raise ValidationError('El pasajero ya tiene una reserva para este vuelo.')
+def clean(self):
+    if not self.vuelo or not self.pasajero:
+        return  # Evita validación si vuelo o pasajero aún no están definidos
+
+    if Reserva.objects.filter(vuelo=self.vuelo, pasajero=self.pasajero).exclude(pk=self.pk).exists():
+        raise ValidationError('El pasajero ya tiene una reserva para este vuelo.')
 
     def save(self, *args, **kwargs):
         self.clean()

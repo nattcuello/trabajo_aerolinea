@@ -56,11 +56,17 @@
 </head>
 <body>
     <nav>
-        <a href="{% url 'home:index' %}">Inicio</a>
-        <a href="{% url 'reservas:lista_reservas' %}">Reservas</a>
-        <a href="{% url 'reservas:crear_reserva' %}">Nueva Reserva</a>
-        <a href="{% url 'listado_pasajeros' %}">Pasajeros</a>
+        <!-- Links actuales -->
 
+        <a href="{% url 'home:index' %}">Inicio</a>
+        <a href="{% url 'pasajeros:listado_pasajeros' %}">Pasajeros</a>
+        <a href="{% url 'vuelos:vuelo_list' %}">Nueva Reserva</a>
+        <a href="{% url 'vuelos:crear_vuelo' %}">Nuevo Vuelo</a>
+    
+        <!-- NUEVOS links para aviones -->
+        <a href="{% url 'vuelos:crear_avion' %}">Nuevo Avión</a>
+    
+        <!-- Resto de tu menú... -->
         {% if user.is_authenticated %}
             <span>Hola, {{ user.username }}</span>
             <form action="{% url 'usuarios:logout' %}" method="post" style="display:inline;">
@@ -72,6 +78,7 @@
             <a href="{% url 'usuarios:registro' %}">Registrarse</a>
         {% endif %}
     </nav>
+    
 
     {% if messages %}
         <div style="margin: 10px;">
