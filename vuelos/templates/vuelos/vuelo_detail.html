@@ -15,10 +15,8 @@
 
 <h2>Reservas confirmadas</h2>
 <ul>
-  {% for reserva in vuelo.reservas.all %}
-    {% if reserva.estado == 'confirmada' %}
-      <li>Asiento {{ reserva.asiento.fila }}{{ reserva.asiento.columna }} reservado por {{ reserva.pasajero.nombre }}</li>
-    {% endif %}
+  {% for reserva in reservas_confirmadas %}
+    <li>Asiento {{ reserva.asiento.fila }}{{ reserva.asiento.columna }} reservado por {{ reserva.pasajero.nombre }}</li>
   {% empty %}
     <li>No hay reservas confirmadas.</li>
   {% endfor %}

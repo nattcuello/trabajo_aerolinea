@@ -56,18 +56,20 @@
 </head>
 <body>
     <nav>
-        <!-- Links actuales -->
-
         <a href="{% url 'home:index' %}">Inicio</a>
-        <a href="{% url 'pasajeros:listado_pasajeros' %}">Pasajeros</a>
-        <a href="{% url 'vuelos:vuelo_list' %}">Nueva Reserva</a>
-        <a href="{% url 'vuelos:crear_vuelo' %}">Nuevo Vuelo</a>
     
-        <!-- NUEVOS links para aviones -->
-        <a href="{% url 'vuelos:crear_avion' %}">Nuevo Avión</a>
-    
-        <!-- Resto de tu menú... -->
         {% if user.is_authenticated %}
+            <a href="{% url 'pasajeros:listado_pasajeros' %}">Pasajeros</a>
+            <a href="{% url 'vuelos:vuelo_list' %}">Vuelos</a>
+    
+            {% if user.perfilusuario.rol == 'admin' %}
+                <a href="{% url 'vuelos:crear_vuelo' %}">Nuevo Vuelo</a>
+            {% endif %}
+    
+            {% if user.perfilusuario.rol != 'pasajero' %}
+                <a href="{% url 'vuelos:crear_avion' %}">Nuevo Avión</a>
+            {% endif %}
+    
             <span>Hola, {{ user.username }}</span>
             <form action="{% url 'usuarios:logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
@@ -79,7 +81,6 @@
         {% endif %}
     </nav>
     
-
     {% if messages %}
         <div style="margin: 10px;">
             {% for message in messages %}

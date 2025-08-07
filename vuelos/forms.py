@@ -6,7 +6,8 @@ class AvionForm(forms.ModelForm):
         model = Avion
         fields = ['modelo', 'capacidad', 'filas', 'columnas']
 
+
 class VueloForm(forms.ModelForm):
     class Meta:
         model = Vuelo
-        fields = '__all__'
+        exclude = ['usuarios_gestores'] 
