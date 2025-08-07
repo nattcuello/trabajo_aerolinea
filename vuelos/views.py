@@ -1,10 +1,52 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Vuelo
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Vuelo, Avion
+from .forms import VueloForm, AvionForm
+from reservas.services import AsientoService  # Servicio para generar asientos
 
-def lista_vuelos(request):
-    vuelos = Vuelo.objects.all()
-    return render(request, 'vuelos/lista_vuelos.html', {'vuelos': vuelos})
 
-def detalle_vuelo(request, vuelo_id):
+@login_required
+def vuelo_list(request):
+    vuelos = Vuelo.objects.filter(usuarios_gestores=request.user)
+    return render(request, 'vuelos/vuelo_list.html', {'vuelos': vuelos})
+
+def vuelo_detail(request, vuelo_id):
     vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
-    return render(request, 'vuelos/detalle_vuelo.html', {'vuelo': vuelo})
+    asientos_disponibles = vuelo.avion.asientos.filter(estado="disponible")
+    reservas_confirmadas = vuelo.reservas.filter(estado="confirmada").select_related('asiento', 'pasajero')
+    
+    return render(request, 'vuelos/vuelo_detail.html', {
+        'vuelo': vuelo,
+        'asientos_disponibles': asientos_disponibles,
+        'reservas_confirmadas': reservas_confirmadas
+    })
+
+
+
+
+@login_required
+def crear_vuelo(request):
+    if request.method == 'POST':
+        form = VueloForm(request.POST)
+        if form.is_valid():
+            vuelo = form.save()
+            vuelo.usuarios_gestores.add(request.user)  # Asigna al usuario actual
+            vuelo.save()
+            return redirect('vuelos:vuelo_list')
+    else:
+        form = VueloForm()
+    return render(request, 'vuelos/crear_vuelo.html', {'form': form})
+
+
+@login_required
+def crear_avion(request):
+    if request.method == 'POST':
+        form = AvionForm(request.POST)
+        if form.is_valid():
+            avion = form.save()
+            AsientoService.generar_asientos_para_avion(avion)  # Generar asientos
+            return redirect('vuelos:vuelo_list')
+    else:
+        form = AvionForm()
+    return render(request, 'vuelos/crear_avion.html', {'form': form})
+

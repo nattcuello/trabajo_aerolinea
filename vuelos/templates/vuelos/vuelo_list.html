@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Listado de Vuelos</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Fecha</th>
+            <th>Reservar</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vuelo in vuelos %}
+        <tr>
+            <td>{{ vuelo.numero }}</td>
+            <td>{{ vuelo.origen }}</td>
+            <td>{{ vuelo.destino }}</td>
+            <td>{{ vuelo.fecha }}</td>
+            <td>
+                <a href="{% url 'reservas:crear_reserva' vuelo.id %}">Reservar</a>
+                <a href="{% url 'vuelos:crear_vuelo' %}  ">Crear vuelo</a>
+
+                
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

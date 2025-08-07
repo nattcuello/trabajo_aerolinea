@@ -13,3 +13,13 @@ class PerfilUsuario(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.get_rol_display()}"
+
+# Propiedad para acceder al perfil desde el usuario: user.perfil
+def get_perfil(self):
+    # Retorna el perfil si existe, sino None (o podrías usar get_or_create si querés)
+    try:
+        return self.perfilusuario
+    except PerfilUsuario.DoesNotExist:
+        return None
+
+User.add_to_class('perfil', property(get_perfil))

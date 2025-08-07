@@ -1,0 +1,23 @@
+<h1>Detalle del Vuelo: {{ vuelo }}</h1>
+
+<p><strong>Origen:</strong> {{ vuelo.origen }}</p>
+<p><strong>Destino:</strong> {{ vuelo.destino }}</p>
+<p><strong>Avión:</strong> {{ vuelo.avion.modelo }}</p>
+
+<h2>Asientos disponibles</h2>
+<ul>
+  {% for asiento in asientos_disponibles %}
+    <li>Asiento {{ asiento.fila }}{{ asiento.columna }} - {{ asiento.tipo }}</li>
+  {% empty %}
+    <li>No hay asientos disponibles.</li>
+  {% endfor %}
+</ul>
+
+<h2>Reservas confirmadas</h2>
+<ul>
+  {% for reserva in reservas_confirmadas %}
+    <li>Asiento {{ reserva.asiento.fila }}{{ reserva.asiento.columna }} reservado por {{ reserva.pasajero.nombre }}</li>
+  {% empty %}
+    <li>No hay reservas confirmadas.</li>
+  {% endfor %}
+</ul>
