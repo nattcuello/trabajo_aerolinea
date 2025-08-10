@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Pasajeros para el Vuelo: {{ vuelo.origen }} → {{ vuelo.destino }} ({{ vuelo.fecha_salida|date:"Y-m-d H:i" }})</h1>
+
+  {% if pasajeros %}
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Documento</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Asiento</th> {# Añadido para mostrar el asiento #}
+        </tr>
+      </thead>
+      <tbody>
+        {% for reserva in reservas %} {# Iterar sobre reservas para acceder al asiento #}
+          <tr>
+            <td>{{ reserva.pasajero.nombre }}</td>
+            <td>{{ reserva.pasajero.documento }}</td>
+            <td>{{ reserva.pasajero.email }}</td>
+            <td>{{ reserva.pasajero.telefono }}</td>
+            <td>{{ reserva.asiento.fila }}{{ reserva.asiento.columna }} ({{ reserva.asiento.get_tipo_display }})</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No hay pasajeros confirmados para este vuelo.</p>
+  {% endif %}
+
+  <br>
+  <a href="{% url 'vuelos:vuelo_list' %}">← Volver al listado de vuelos</a>
+{% endblock %}
