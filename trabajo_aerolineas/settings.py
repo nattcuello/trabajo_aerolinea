@@ -134,3 +134,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'usuarios:login'
 LOGIN_REDIRECT_URL = 'home:index'
 LOGOUT_REDIRECT_URL = 'home:index'
+
+#importaciones hechas en clase
+import os 
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
+import logging
+
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,  # Capture info and above as breadcrumbs
+    event_level=logging.ERROR  # Send errors as events
+
+)
+
+sentry_sdk.init(
+    dsn="https://515b6cc12b05da0a649aeeb005934e3d@o4509805221117953.ingest.us.sentry.io/4509805238550528",
+        integrations= [
+        DjangoIntegration(),
+        sentry_logging
+       
+    ],
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
