@@ -5,11 +5,23 @@ from .forms import VueloForm, AvionForm
 from reservas.services import AsientoService  # Servicio para generar asientos
 
 
+
 @login_required
 def vuelo_list(request):
-    vuelos = Vuelo.objects.filter(usuarios_gestores=request.user)
+    if request.user.perfil and request.user.perfil.rol == 'admin':
+
+        vuelos = Vuelo.objects.all()
+    elif request.user.perfil.rol == 'operador':
+        vuelos = Vuelo.objects.filter(usuarios_gestores=request.user)
+    else:
+        # El pasajero no debería ver esta vista
+        return redirect('home:index')
+
     return render(request, 'vuelos/vuelo_list.html', {'vuelos': vuelos})
 
+
+
+@login_required
 def vuelo_detail(request, vuelo_id):
     vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
     asientos_disponibles = vuelo.avion.asientos.filter(estado="disponible")

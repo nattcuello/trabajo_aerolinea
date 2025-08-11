@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     #apps propias
     'pasajeros',
     'reservas',
-    'usuarios',
     'vuelos.apps.VuelosConfig',
+    'usuarios.apps.UsuariosConfig',
     'home'
 ]
 
@@ -160,3 +160,17 @@ sentry_sdk.init(
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        "level": "INFO",
+        "handlers": ["console"],
+    },
+}

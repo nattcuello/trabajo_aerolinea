@@ -14,10 +14,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('vuelos/', include(('vuelos.urls', 'vuelos'), namespace='vuelos')),
     path('pasajeros/', include(('pasajeros.urls', 'pasajeros'), namespace='pasajeros')),
-    path('reservas/', include('reservas.urls')),
     path('usuarios/', include('usuarios.urls', namespace='usuarios')),
     path('', include('home.urls')),
     path('sentry-debug/', trigger_error),
+    path('reservas/', include('reservas.urls', namespace='reservas')),
+    path('reservas/', include('reservas.urls')),
+
 ]
 
 
