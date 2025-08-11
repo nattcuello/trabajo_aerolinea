@@ -1,20 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Asientos para el vuelo {{ vuelo }}</h1>
+<h1>Asientos para el vuelo {{ vuelo.origen }} → {{ vuelo.destino }} | {{ vuelo.fecha }}</h1>
 
-  {% for fila, asientos in asientos_por_fila.items %}
-    <div>
-      <strong>Fila {{ fila }}:</strong>
-      {% for asiento in asientos %}
-        <span style="display:inline-block; width:60px; padding:4px; border:1px solid #ccc; margin:2px;
-                     background-color: {% if asiento.estado == 'disponible' %}lightgreen{% elif asiento.estado == 'reservado' %}gold{% else %}lightcoral{% endif %};">
-          {{ asiento.fila }}{{ asiento.columna }}
-        </span>
-      {% endfor %}
-    </div>
-  {% endfor %}
+<style>
+  .asiento {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    margin: 4px 6px;
+    border: 2px solid #666;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .disponible {
+    background-color: #b2d8b2; /* verde suave */
+    color: #2f4f2f;
+    cursor: pointer;
+    box-shadow: 0 0 6px #8bc88b;
+  }
+  .disponible:hover {
+    background-color: #8bc88b;
+    box-shadow: 0 0 12px #6da66d;
+  }
+  .ocupado {
+    background-color: #e0a0a0; /* rojo suave */
+    color: #660000;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .fila-label {
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .tipo {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #555;
+  }
+</style>
 
-  <br>
-  <a href="{% url 'vuelos:vuelo_detail' vuelo.id %}">← Volver al detalle del vuelo</a>
+{% for fila, asientos in asientos_por_fila.items %}
+  <div>
+    <div class="fila-label">Fila {{ fila }}</div>
+    {% for asiento in asientos %}
+      <span class="asiento {{ asiento.estado_vuelo }}" title="Tipo: {{ asiento.tipo }}">
+        {{ asiento.fila }}{{ asiento.columna }}
+        <span class="tipo">{{ asiento.tipo }}</span>
+      </span>
+    {% endfor %}
+  </div>
+{% endfor %}
+
+<br>
+<a href="{% url 'vuelos:vuelo_detail' vuelo.id %}">← Volver al detalle del vuelo</a>
 {% endblock %}
