@@ -5,13 +5,20 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('vuelos/', include(('vuelos.urls', 'vuelos'), namespace='vuelos')),
     path('pasajeros/', include(('pasajeros.urls', 'pasajeros'), namespace='pasajeros')),
-    path('reservas/', include('reservas.urls')),
     path('usuarios/', include('usuarios.urls', namespace='usuarios')),
     path('', include('home.urls')),
+    path('sentry-debug/', trigger_error),
+    path('reservas/', include('reservas.urls', namespace='reservas')),
+    path('reservas/', include('reservas.urls')),
 
 ]
 

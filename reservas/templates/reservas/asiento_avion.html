@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Seleccionar asiento - Avión {{ avion.modelo }}</h2>
+
+<style>
+  .avion {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .fila {
+    display: flex;
+    margin-bottom: 8px;
+  }
+  .asiento {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 35px;
+    font-size: 12px;
+    margin: 0 3px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 3px rgba(0,0,0,0.3);
+  }
+  .disponible { background-color: green; }
+  .ocupado { background-color: red; cursor: not-allowed; }
+  .seleccionado { background-color: gray; }
+  .pasillo { width: 20px; }
+</style>
+
+<div class="avion">
+  <div>
+    {% regroup asientos by fila as filas %}
+    {% for fila in filas %}
+      <div class="fila">
+        {% for asiento in fila.list %}
+          {% if asiento.columna == 'C' %}
+            <div class="pasillo"></div>
+          {% endif %}
+          <div class="asiento {{ asiento.estado }}"
+               data-id="{{ asiento.id }}">
+            {{ asiento.fila }}{{ asiento.columna }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<button id="reservar-btn" style="margin-top:20px;">Reservar</button>
+
+<script>
+  let seleccionados = [];
+
+  document.querySelectorAll('.asiento.disponible').forEach(asiento => {
+    asiento.addEventListener('click', () => {
+      let id = asiento.dataset.id;
+      if (seleccionados.includes(id)) {
+        seleccionados = seleccionados.filter(x => x !== id);
+        asiento.classList.remove('seleccionado');
+      } else {
+        seleccionados.push(id);
+        asiento.classList.add('seleccionado');
+      }
+    });
+  });
+
+  document.getElementById('reservar-btn').addEventListener('click', () => {
+    if (seleccionados.length === 0) {
+      alert("Selecciona al menos un asiento");
+      return;
+    }
+    fetch("{% url 'reservas:reservar_asientos' avion.id %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ asientos: seleccionados })
+    }).then(res => {
+      if (res.ok) {
+        alert("Asientos reservados con éxito");
+        location.reload();
+      }
+    });
+  });
+</script>
+{% endblock %}
