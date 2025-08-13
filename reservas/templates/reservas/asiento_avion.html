@@ -37,12 +37,12 @@
     {% for fila in filas %}
       <div class="fila">
         {% for asiento in fila.list %}
-          {% if asiento.columna == 'C' %}
+          {% if asiento.asiento.columna == 'C' %}
             <div class="pasillo"></div>
           {% endif %}
-          <div class="asiento {{ asiento.estado }}"
+          <div class="asiento {{ asiento.estado_vuelo }}"
                data-id="{{ asiento.id }}">
-            {{ asiento.fila }}{{ asiento.columna }}
+            {{ asiento.asiento.fila }}{{ asiento.asiento.columna }}
           </div>
         {% endfor %}
       </div>
@@ -73,7 +73,7 @@
       alert("Selecciona al menos un asiento");
       return;
     }
-    fetch("{% url 'reservas:reservar_asientos' avion.id %}", {
+    fetch("{% url 'reservas:reservar_asientos' vuelo.id %}", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,6 +84,8 @@
       if (res.ok) {
         alert("Asientos reservados con éxito");
         location.reload();
+      } else {
+        alert("Error al reservar asientos");
       }
     });
   });

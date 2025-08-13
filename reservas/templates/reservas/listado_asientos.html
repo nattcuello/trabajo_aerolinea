@@ -1,18 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Asientos del avión {{ avion.modelo }}</h2>
+    {% for fila, asientos in asientos_por_fila.items %}
+        <div>
+            <strong>Fila {{ fila }}:</strong>
+            {% for asiento in asientos %}
+                <button class="asiento"
+                        onclick="seleccionarAsiento('{{ asiento.fila }}{{ asiento.columna }}', this)"
+                        style="background-color: {% if asiento.estado == 'disponible' %}lightgreen{% elif asiento.estado == 'ocupado' %}lightcoral{% else %}gold{% endif %};"
+                        {% if asiento.estado == 'ocupado' %}disabled{% endif %}>
+                    {{ asiento.fila }}{{ asiento.columna }}
+                </button>
+            {% endfor %}
+        </div>
+    {% endfor %}
 
-{% for fila, asientos in asientos_por_fila.items %}
-    <div>
-        <strong>Fila {{ fila }}:</strong>
-        {% for asiento in asientos %}
-            <span style="display:inline-block; width:60px; padding:4px; border:1px solid #ccc; margin:2px;
-                         background-color: {% if asiento.estado == 'disponible' %}lightgreen{% elif asiento.estado == 'reservado' %}gold{% else %}lightcoral{% endif %};">
-                {{ asiento.fila }}{{ asiento.columna }}
-            </span>
-        {% endfor %}
-    </div>
-{% endfor %}
+    <button onclick="irAReserva()">Continuar con la reserva</button>
 
+    <script>
+        let asientosSeleccionados = new Set();
+        
+        function seleccionarAsiento(numeroAsiento, boton) {
+            // Lógica para seleccionar/deseleccionar el asiento
+            if (asientosSeleccionados.has(numeroAsiento)) {
+                asientosSeleccionados.delete(numeroAsiento);
+                boton.style.border = '1px solid #ccc';
+            } else {
+                asientosSeleccionados.add(numeroAsiento);
+                boton.style.border = '2px solid blue';
+            }
+        }
+        
+        function irAReserva() {
+            if (asientosSeleccionados.size > 0) {
+                // Aquí, construyes la URL para el formulario
+                // La URL debe incluir los asientos seleccionados
+                const asientos = Array.from(asientosSeleccionados).join(',');
+                window.location.href = `/reservar?asientos=${asientos}`; 
+            } else {
+                alert('Por favor, selecciona al menos un asiento.');
+            }
+        }
+    </script>
 {% endblock %}

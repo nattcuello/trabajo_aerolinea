@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Seleccionar asiento para vuelo {{ vuelo.origen }} → {{ vuelo.destino }} | {{ vuelo.fecha }}</h1>
+
+<style>
+  .asiento {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    margin: 4px 6px;
+    border: 2px solid #666;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 50px;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  .disponible {
+    background-color: #b2d8b2;
+    color: #2f4f2f;
+    box-shadow: 0 0 6px #8bc88b;
+  }
+  .disponible:hover {
+    background-color: #8bc88b;
+    box-shadow: 0 0 12px #6da66d;
+  }
+  .seleccionado {
+    background-color: #3a7f3a !important;
+    box-shadow: 0 0 12px #2e6c2e !important;
+    color: white !important;
+  }
+  .ocupado {
+    background-color: #e0a0a0;
+    color: #660000;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .fila-label {
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+  .tipo {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #555;
+  }
+  #reservar-btn {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+  }
+  #reservar-btn:disabled {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+  }
+</style>
+
+<div id="asientos-container">
+  {% for fila, asientos in asientos_por_fila.items %}
+    <div>
+      <div class="fila-label">Fila {{ fila }}</div>
+      {% for asiento in asientos %}
+        <span class="asiento {{ asiento.estado_vuelo }}" 
+              data-id="{{ asiento.id }}"
+              data-fila="{{ asiento.fila }}"
+              data-columna="{{ asiento.columna }}"
+              data-tipo="{{ asiento.tipo }}">
+          {{ asiento.fila }}{{ asiento.columna }}
+          <span class="tipo">{{ asiento.tipo }}</span>
+        </span>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+
+<button id="reservar-btn" disabled>Reservar Asiento(s)</button>
+
+<script>
+  const container = document.getElementById('asientos-container');
+  const reservarBtn = document.getElementById('reservar-btn');
+  let seleccionados = [];
+
+  // Escucha los clics en el contenedor para manejar la selección de asientos.
+  container.addEventListener('click', (e) => {
+    const target = e.target.closest('.asiento');
+    if (!target || target.classList.contains('ocupado')) {
+      return;
+    }
+
+    const id = target.dataset.id;
+
+    if (seleccionados.includes(id)) {
+      seleccionados = seleccionados.filter(x => x !== id);
+      target.classList.remove('seleccionado');
+    } else {
+      seleccionados.push(id);
+      target.classList.add('seleccionado');
+    }
+
+    // Habilita o deshabilita el botón de reservar según si hay asientos seleccionados.
+    reservarBtn.disabled = seleccionados.length === 0;
+  });
+
+  // Escucha los clics en el botón de reservar.
+  reservarBtn.addEventListener('click', () => {
+    if (seleccionados.length === 0) {
+      alert('Por favor selecciona al menos un asiento.');
+      return;
+    }
+    
+    // Concatena los IDs de los asientos seleccionados en una cadena.
+    const ids_asientos = seleccionados.join(',');
+
+    // Construye la URL de redirección a la nueva vista de formulario.
+    const url = "{% url 'reservas:crear_reserva_multiple' vuelo.id %}" + "?asientos=" + ids_asientos;
+
+    // Redirige al usuario.
+    window.location.href = url;
+  });
+
+</script>
+{% endblock %}

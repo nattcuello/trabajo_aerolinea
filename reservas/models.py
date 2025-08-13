@@ -1,7 +1,9 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from vuelos.models import Vuelo
 from pasajeros.models import Pasajero
 from vuelos.models import Vuelo, Avion
+
 
 
 class Asiento(models.Model):
@@ -22,6 +24,12 @@ class Asiento(models.Model):
         return f"Asiento {self.fila}{self.columna} - {self.tipo} ({self.estado})"
 
 
+class AsientoVuelo(models.Model):
+    vuelo = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name="asientos_vuelo")
+    asiento = models.ForeignKey(Asiento, on_delete=models.CASCADE)
+    estado = models.CharField(max_length=20, choices=[('disponible', 'Disponible'), ('ocupado', 'Ocupado')], default='disponible')
+
+
 class Reserva(models.Model):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
@@ -29,9 +37,11 @@ class Reserva(models.Model):
         ('cancelada', 'Cancelada'),
     ]
 
+
+
     pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, related_name="reservas")
     vuelo = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name="reservas")
-    asiento = models.OneToOneField(Asiento, on_delete=models.PROTECT)  # PROTECT para evitar borrar asiento reservado
+    asiento = models.OneToOneField(AsientoVuelo, on_delete=models.PROTECT) # PROTECT para evitar borrar asiento reservado
     fecha_reserva = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
     precio_final = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -56,3 +66,4 @@ class Reserva(models.Model):
         verbose_name = "Reserva"
         verbose_name_plural = "Reservas"
         ordering = ['-fecha_reserva']
+
