@@ -1,6 +1,8 @@
-# reservas/services.py
 
 from vuelos.models import Avion
+from reservas.models import AsientoVuelo
+
+
 
 class AsientoService:
 
@@ -42,3 +44,21 @@ class AsientoService:
             return 'pasillo'
         else:
             return 'medio'
+
+
+    @staticmethod
+    def generar_asientos_para_vuelo(vuelo):
+        """
+        Crea AsientoVuelo para cada asiento base del avión asignado al vuelo.
+        """
+        asientos_avion = vuelo.avion.asientos.all()
+        asientos_vuelo = [
+            AsientoVuelo(
+                vuelo=vuelo,
+                asiento=asiento,
+                estado='disponible'
+            )
+            for asiento in asientos_avion
+        ]
+        AsientoVuelo.objects.bulk_create(asientos_vuelo)
+        return asientos_vuelo

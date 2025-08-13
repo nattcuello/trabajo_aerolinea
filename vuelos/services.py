@@ -1,16 +1,15 @@
-from vuelos.models import Avion
-from .models import Asiento
+from vuelos.models import Avion, Vuelo
+from .models import Asiento, AsientoVuelo
 
 class AsientoService:
 
     @staticmethod
     def generar_asientos_para_avion(avion: Avion):
         """
-        Genera todos los asientos para un avión según sus filas y columnas.
-        Cada asiento tiene fila, columna, tipo y estado 'disponible'.
+        Genera todos los asientos base para un avión según sus filas y columnas.
+        Estos asientos son 'plantilla' y se vinculan solo al avión.
         """
         letras = [chr(i) for i in range(65, 65 + avion.columnas)]  # A, B, C...
-
         asientos_creados = []
         for fila in range(1, avion.filas + 1):
             for letra in letras:
@@ -23,7 +22,6 @@ class AsientoService:
                     estado='disponible'
                 )
                 asientos_creados.append(asiento)
-
         Asiento.objects.bulk_create(asientos_creados)
         return asientos_creados
 
@@ -41,7 +39,26 @@ class AsientoService:
         ultima_columna = chr(64 + total_columnas)
         if letra == primera_columna or letra == ultima_columna:
             return 'ventana'
-        elif total_columnas >= 4 and (letra == chr(ord(primera_columna) + 1) or letra == chr(ord(ultima_columna) - 1)):
+        elif total_columnas >= 4 and (
+            letra == chr(ord(primera_columna) + 1) or letra == chr(ord(ultima_columna) - 1)
+        ):
             return 'pasillo'
         else:
             return 'medio'
+
+    @staticmethod
+    def generar_asientos_para_vuelo(vuelo: Vuelo):
+        """
+        Crea AsientoVuelo para cada asiento base del avión asignado al vuelo.
+        """
+        asientos_avion = vuelo.avion.asientos.all()
+        asientos_vuelo = [
+            AsientoVuelo(
+                vuelo=vuelo,
+                asiento=asiento,
+                estado='disponible'
+            )
+            for asiento in asientos_avion
+        ]
+        AsientoVuelo.objects.bulk_create(asientos_vuelo)
+        return asientos_vuelo

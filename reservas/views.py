@@ -8,10 +8,11 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from usuarios.decorators import role_required
-from django.forms import formset_factory
 from .forms import ReservaForm, PasajeroForm
-from django.forms import modelformset_factory
 from pasajeros.models import Pasajero
+from collections import defaultdict
+from django.forms import formset_factory
+
 
 
 # La vista `crear_reserva` se mantiene, pero es un método alternativo a `reservar_asientos`
@@ -55,160 +56,90 @@ def lista_reservas(request):
     reservas = Reserva.objects.select_related('vuelo', 'pasajero', 'asiento')
     return render(request, 'reservas/reserva_list.html', {'reservas': reservas})
 
-
-@login_required
-def seleccionar_asiento(request, vuelo_id):
-    vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
-    # Usar `AsientoVuelo` es clave para evitar duplicados
-    asientos_vuelo = AsientoVuelo.objects.filter(vuelo=vuelo).order_by('asiento__fila', 'asiento__columna')
-
-    asientos_por_fila = {}
-
-    for asiento_vuelo in asientos_vuelo:
-        asiento = asiento_vuelo.asiento
-        estado_vuelo = asiento_vuelo.estado
-
-        asientos_por_fila.setdefault(asiento.fila, []).append({
-            'id': asiento_vuelo.id,
-            'fila': asiento.fila,
-            'columna': asiento.columna,
-            'tipo': asiento.tipo,
-            'estado_vuelo': estado_vuelo,
-        })
-
-    return render(request, 'reservas/seleccionar_asiento.html', {
-        'vuelo': vuelo,
-        'asientos_por_fila': asientos_por_fila
-    })
-
-
-@login_required
-@role_required('admin', 'operador')
-def ver_asientos_por_vuelo(request, vuelo_id):
-    vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
-    asientos_vuelo = AsientoVuelo.objects.filter(vuelo=vuelo).order_by('asiento__fila', 'asiento__columna')
-
-    asientos_por_fila = {}
-
-    for asiento_vuelo in asientos_vuelo:
-        asiento = asiento_vuelo.asiento
-        estado_vuelo = asiento_vuelo.estado
-
-        asientos_por_fila.setdefault(asiento.fila, []).append({
-            'id': asiento_vuelo.id,
-            'fila': asiento.fila,
-            'columna': asiento.columna,
-            'tipo': asiento.tipo,
-            'estado_vuelo': estado_vuelo,
-        })
-
-    return render(request, 'reservas/asientos_por_vuelo.html', {
-        'vuelo': vuelo,
-        'asientos_por_fila': asientos_por_fila
-    })
-
-
-
-@csrf_exempt
-@login_required
-def reservar_asientos(request, vuelo_id):
-    if request.method != "POST":
-        return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
-
-    try:
-        data = json.loads(request.body)
-        ids_asientos = data.get("asientos", [])
-        if not ids_asientos:
-            return JsonResponse({"status": "error", "message": "No se enviaron IDs de asientos"}, status=400)
-
-        vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
-        pasajero = request.user.perfil # ¡Revisa esta línea!
-
-        with transaction.atomic():
-            asientos_vuelo = (
-                AsientoVuelo.objects.select_for_update()
-                .filter(id__in=ids_asientos, vuelo=vuelo)
-            )
-
-            for asiento_vuelo in asientos_vuelo:
-                if asiento_vuelo.estado != "disponible":
-                    return JsonResponse(
-                        {"status": "error", "message": f"Asiento {asiento_vuelo.id} no está disponible."},
-                        status=400
-                    )
-            
-            # Crear las reservas y marcar los asientos como ocupados
-            for asiento_vuelo in asientos_vuelo:
-                # El error podría estar aquí. Asegúrate de que 'pasajero' no sea None.
-                Reserva.objects.create(
-                    pasajero=pasajero,  
-                    vuelo=vuelo,
-                    asiento=asiento_vuelo,
-                    estado="confirmada",
-                    precio_final=vuelo.precio_base
-                )
-                asiento_vuelo.estado = "ocupado"
-                asiento_vuelo.save()
-
-        return JsonResponse({"status": "ok", "message": "Asientos reservados con éxito"})
-
-    except json.JSONDecodeError:
-        return JsonResponse({"status": "error", "message": "JSON inválido"}, status=400)
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
-    
-
-
-@login_required
-def lista_reservas(request):
-    reservas = Reserva.objects.all().select_related('vuelo', 'pasajero')
-    return render(request, 'reservas/reserva_list.html', {'reservas': reservas})
-
 @login_required
 def crear_reserva_multiple(request, vuelo_id):
     vuelo = get_object_or_404(Vuelo, id=vuelo_id)
     num_pasajeros = int(request.GET.get('num_pasajeros', 1))
-    # Recibimos los asientos como lista de strings desde GET o POST, según tu implementación
-    ids_asientos = request.GET.getlist('asientos')  # Ejemplo: ?asientos=1&asientos=2
+    ids_asientos = request.GET.getlist('asientos')  # Ej: ?asientos=44&asientos=45
 
     if len(ids_asientos) != num_pasajeros:
-        # Manejar inconsistencia, por ejemplo:
         return render(request, 'reservas/error.html', {
             'mensaje': 'El número de asientos no coincide con el número de pasajeros.'
         })
 
-    PasajeroFormSet = modelformset_factory(Pasajero, form=PasajeroForm, extra=num_pasajeros)
+    # Usamos formset normal en lugar de ModelFormSet
+    PasajeroFormSet = formset_factory(PasajeroForm, extra=num_pasajeros)
 
     if request.method == 'POST':
         formset = PasajeroFormSet(request.POST)
         if formset.is_valid():
             asientos_vuelo = AsientoVuelo.objects.filter(id__in=ids_asientos)
+
             if asientos_vuelo.count() != num_pasajeros:
                 return render(request, 'reservas/error.html', {
                     'mensaje': 'Asientos inválidos o incompletos.'
                 })
 
-            # Ordenar asientos para que coincida con el orden de ids_asientos
-            asientos_vuelo_ordered = sorted(asientos_vuelo, key=lambda a: ids_asientos.index(str(a.id)))
+            # Ordenamos los asientos según el orden de ids_asientos
+            asientos_vuelo_ordered = sorted(
+                asientos_vuelo, 
+                key=lambda a: ids_asientos.index(str(a.id))
+            )
 
+            # Guardamos cada pasajero y su reserva
             for form, asiento_vuelo in zip(formset, asientos_vuelo_ordered):
-                pasajero = form.save()
-                reserva = Reserva.objects.create(
+                pasajero = form.save()  # Usa pasajero existente o crea uno nuevo
+
+                reserva = Reserva(
                     vuelo=vuelo,
                     pasajero=pasajero,
                     asiento=asiento_vuelo,
                     estado='confirmada',
                     precio_final=vuelo.precio_base
                 )
-                asiento_vuelo.estado='ocupado'
-                asiento_vuelo.save()
+                reserva.save()  # Guardamos la reserva
+
+                asiento_vuelo.estado = 'ocupado'
+                asiento_vuelo.save()  # Marcamos el asiento como ocupado
+
             return redirect('reservas:lista_reservas')
     else:
-        formset = PasajeroFormSet(queryset=Pasajero.objects.none())
+        formset = PasajeroFormSet()
 
     return render(request, 'reservas/crear_reserva_multiple.html', {
         'vuelo': vuelo,
         'formset': formset,
         'num_pasajeros': num_pasajeros,
         'ids_asientos': ids_asientos,
+    })
+
+@login_required
+def seleccionar_asiento(request, vuelo_id):
+    vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+
+    # Traemos los AsientoVuelo del vuelo y hacemos join con Asiento
+    asientos_vuelo = AsientoVuelo.objects.filter(vuelo=vuelo).select_related('asiento').order_by(
+        'asiento__fila', 'asiento__columna'
+    )
+
+    # Construimos un diccionario por fila
+    asientos_por_fila = defaultdict(list)
+    for av in asientos_vuelo:
+        asiento_info = {
+            'id': av.id,
+            'fila': av.asiento.fila,
+            'columna': av.asiento.columna,
+            'tipo': getattr(av.asiento, 'tipo', ''),  # si tienes tipo
+            'estado_vuelo': av.estado
+        }
+        asientos_por_fila[av.asiento.fila].append(asiento_info)
+
+    # Si es una petición AJAX, devolvemos JSON
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'asientos': list(asientos_vuelo.values())})
+
+    # Renderizamos el template
+    return render(request, 'reservas/seleccionar_asiento.html', {
+        'vuelo': vuelo,
+        'asientos_por_fila': dict(asientos_por_fila),
     })

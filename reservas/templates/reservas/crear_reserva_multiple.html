@@ -1,42 +1,51 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-    <h1>Crear Reservas para el Vuelo: {{ vuelo.numero }}</h1>
-    <p>Complete los datos de los pasajeros para los {{ num_pasajeros }} asientos seleccionados.</p>
+<h1>Crear Reservas para el Vuelo: {{ vuelo.numero }}</h1>
+<p>Complete los datos de los pasajeros para los {{ num_pasajeros }} asientos seleccionados.</p>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        
-        {% if formset.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in formset.non_field_errors %}
-                    <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
+<form method="post">
+  {% csrf_token %}
+  {{ formset.management_form }}
+  <table>
+    <tr>
+      <th>Pasajero existente</th>
+      <th>Nombre</th>
+      <th>Tipo Documento</th>
+      <th>Documento</th>
+      <th>Email</th>
+      <th>Teléfono</th>
+      <th>Fecha de Nacimiento</th>
+    </tr>
+    {% for form in formset %}
+      <tr>
+        <td>{{ form.pasajero_existente }}</td>
+        <td>{{ form.nombre }}</td>
+        <td>{{ form.tipo_documento }}</td>
+        <td>{{ form.documento }}</td>
+        <td>{{ form.email }}</td>
+        <td>{{ form.telefono }}</td>
+        <td>{{ form.fecha_nacimiento }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  <button type="submit">Reservar</button>
+</form>
 
-        <div class="pasajeros-container">
-            {% for form in formset %}
-                <div class="pasajero-form">
-                    <h3>Pasajero {{ forloop.counter }}</h3>
-                    {% if form.errors %}
-                        <div class="alert alert-warning">
-                            {% for field, errors in form.errors.items %}
-                                <p>{{ field }}: {{ errors|join:", " }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    
-                    <p>{{ form.nombre.label_tag }} {{ form.nombre }}</p>
-                    <p>{{ form.tipo_documento.label_tag }} {{ form.tipo_documento }}</p>
-                    <p>{{ form.documento.label_tag }} {{ form.documento }}</p>
-                    <p>{{ form.email.label_tag }} {{ form.email }}</p>
-                    <p>{{ form.telefono.label_tag }} {{ form.telefono }}</p>
-                    <p>{{ form.fecha_nacimiento.label_tag }} {{ form.fecha_nacimiento }}</p>
-                </div>
-            {% endfor %}
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Confirmar Reservas</button>
-    </form>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const selects = document.querySelectorAll('select[name$="pasajero_existente"]');
+
+    selects.forEach(select => {
+      select.addEventListener('change', function() {
+        const row = select.closest('tr');
+        const disableFields = select.value !== ""; // Si hay pasajero seleccionado, deshabilitar
+        row.querySelectorAll('input').forEach(input => {
+          if (!input.name.includes('pasajero_existente')) {
+            input.disabled = disableFields;
+          }
+        });
+      });
+    });
+  });
+</script>
 {% endblock %}
