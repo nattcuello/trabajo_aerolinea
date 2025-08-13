@@ -25,8 +25,8 @@
             <td>${{ vuelo.precio_base }}</td>
             <td>{{ vuelo.avion.modelo }}</td>
             <td>
-                <a href="{% url 'reservas:seleccionar_asiento' vuelo.id %}">Reservar</a>
-                <a href="{% url 'vuelos:crear_vuelo' %}">Crear vuelo</a>
+                <a href="{% url 'reservas:seleccionar_asiento' vuelo.id %}">Reservar</a> |
+                <a href="{% url 'vuelos:crear_vuelo' %}">Crear vuelo</a> |
                 <a href="{% url 'vuelos:vuelo_detail' vuelo.id %}">Ver Detalle</a> |
                 <a href="{% url 'vuelos:editar_vuelo' vuelo.id %}">Editar</a> | {# Enlace para editar #}
                 <a href="{% url 'vuelos:eliminar_vuelo' vuelo.id %}">Eliminar</a> {# Enlace para eliminar #}
