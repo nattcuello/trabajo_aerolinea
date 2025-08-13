@@ -1,32 +1,26 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-  <h2>Lista de reservas</h2>
-  <a href="{% url 'reservas:crear_reserva' %}">Crear nueva reserva</a>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Pasajero</th>
-        <th>Vuelo</th>
-        <th>Asiento</th>
-        <th>Estado</th>
-        <th>Fecha</th>
-        <th>Precio</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for reserva in reservas %}
-        <tr>
-          <td>{{ reserva.pasajero.nombre }}</td>
-          <td>{{ reserva.vuelo }}</td>
-          <td>{{ reserva.asiento }}</td>
-          <td>{{ reserva.estado }}</td>
-          <td>{{ reserva.fecha_reserva }}</td>
-          <td>${{ reserva.precio_final }}</td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="6">No hay reservas registradas.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <h1>Lista de Reservas</h1>
+
+    {% if reservas %}
+        <table>
+            <tr>
+                <th>Vuelo</th>
+                <th>Pasajero</th>
+                <th>Documento</th>
+                <th>Email</th>
+            </tr>
+            {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.vuelo.numero }}</td>
+                    <td>{{ reserva.pasajero.nombre }}</td>
+                    <td>{{ reserva.pasajero.documento }}</td>
+                    <td>{{ reserva.pasajero.email }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <a href="{% url 'reservas:crear_reserva' vuelo_id=reservas.first.vuelo.id %}">Crear nueva reserva</a>
+    {% else %}
+        <p>No hay reservas cargadas.</p>
+    {% endif %}
 {% endblock %}

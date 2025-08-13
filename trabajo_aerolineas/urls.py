@@ -1,11 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
 
-# 👇 ESTAS DOS IMPORTACIONES SON CLAVE PARA SERVIR LOS ARCHIVOS ESTÁTICOS
+# Para servir archivos estáticos en desarrollo
 from django.conf import settings
 from django.conf.urls.static import static
-
-
 
 def trigger_error(request):
     division_by_zero = 1 / 0
@@ -17,13 +15,10 @@ urlpatterns = [
     path('usuarios/', include('usuarios.urls', namespace='usuarios')),
     path('', include('home.urls')),
     path('sentry-debug/', trigger_error),
-    path('reservas/', include('reservas.urls', namespace='reservas')),
-    path('reservas/', include('reservas.urls')),
 
+    # Solo UNA vez la app reservas con namespace
+    path('reservas/', include('reservas.urls', namespace='reservas')),
 ]
 
-
-
-# ✅ Agregá esto tal como está al final del archivo
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

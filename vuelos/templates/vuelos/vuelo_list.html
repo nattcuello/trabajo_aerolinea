@@ -19,10 +19,8 @@
             <td>{{ vuelo.destino }}</td>
             <td>{{ vuelo.fecha }}</td>
             <td>
-                <a href="{% url 'reservas:crear_reserva' vuelo.id %}">Reservar</a>
-                <a href="{% url 'vuelos:crear_vuelo' %}  ">Crear vuelo</a>
-
-                
+                <a href="{% url 'reservas:seleccionar_asiento' vuelo.id %}">Reservar</a>
+                <a href="{% url 'vuelos:crear_vuelo' %}">Crear vuelo</a>
             </td>
         </tr>
         {% endfor %}

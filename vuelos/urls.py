@@ -1,6 +1,8 @@
+
 from django.urls import path
 from . import views
-from reservas.views import ver_asientos_por_vuelo
+# La línea siguiente ya no es necesaria y causaba el error
+# from reservas.views import ver_asientos_por_vuelo 
 
 app_name = 'vuelos'
 
@@ -9,6 +11,6 @@ urlpatterns = [
     path('crear/', views.crear_vuelo, name='crear_vuelo'),
     path('crear-avion/', views.crear_avion, name='crear_avion'),
     path('<int:vuelo_id>/', views.vuelo_detail, name='vuelo_detail'),
-    path('<int:vuelo_id>/asientos/', ver_asientos_por_vuelo, name='asientos_vuelo'),
-
+    # Esta línea también debe ser eliminada
+    # path('<int:vuelo_id>/asientos/', ver_asientos_por_vuelo, name='asientos_vuelo'),
 ]

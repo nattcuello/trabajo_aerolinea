@@ -1,32 +1,35 @@
+# reservas/forms.py
+
 from django import forms
-from .models import Reserva, Asiento
-from pasajeros.models import Pasajero
+from .models import Reserva, AsientoVuelo
+from pasajeros.models import Pasajero # Importamos tu modelo Pasajero
+from vuelos.models import Vuelo
 
-
+# Formulario para una sola reserva (tu código original)
 class ReservaForm(forms.ModelForm):
-    pasajero = forms.ModelChoiceField(queryset=Pasajero.objects.all())
-    asiento = forms.ModelChoiceField(queryset=Asiento.objects.none())
+    # ... (tu código de ReservaForm aquí)
 
     class Meta:
         model = Reserva
-        fields = ['pasajero', 'asiento']
+        fields = ['pasajero', 'asiento'] # Ejemplo de campos
 
-    def __init__(self, *args, vuelo=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.vuelo = vuelo
-        if vuelo:
-            self.fields['asiento'].queryset = vuelo.avion.asientos.filter(estado='disponible')
+# --- NUEVO FORMULARIO PARA PASAJEROS ---
+# Este formulario es el que debe usarse en la vista crear_reserva_multiple
 
-    def clean(self):
-        # Asignar vuelo antes de validar
-        if self.vuelo:
-            self.instance.vuelo = self.vuelo
-        return super().clean()
+class PasajeroForm(forms.ModelForm):
+    # Define el campo con los formatos de fecha permitidos
+    fecha_nacimiento = forms.DateField(
+        input_formats=['%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y'],
+        widget=forms.DateInput(attrs={'placeholder': 'MM-DD-YYYY'})
+    )
 
-    def save(self, commit=True):
-        reserva = super().save(commit=False)
-        if self.vuelo:
-            reserva.vuelo = self.vuelo
-        if commit:
-            reserva.save()
-        return reserva
+    class Meta:
+        model = Pasajero
+        fields = [
+            'nombre',
+            'tipo_documento',
+            'documento',
+            'email',
+            'telefono',
+            'fecha_nacimiento'
+        ]
