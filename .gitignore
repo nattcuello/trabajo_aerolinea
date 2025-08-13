@@ -1,3 +1,7 @@
 .environment/
 __pycache__/
 *.py[cod]
+
+# Quitar de Git pero mantener los archivos en tu PC
+git rm --cached db.sqlite3
+git rm --cached -r __pycache__/
