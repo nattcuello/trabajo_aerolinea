@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Vuelo, Avion
 from .forms import VueloForm, AvionForm
 from reservas.services import AsientoService  # Servicio para generar asientos
-
+from django.contrib import messages
 
 
 @login_required
@@ -62,3 +62,24 @@ def crear_avion(request):
         form = AvionForm()
     return render(request, 'vuelos/crear_avion.html', {'form': form})
 
+@login_required
+def editar_vuelo(request, vuelo_id):
+    vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
+    if request.method == 'POST':
+        form = VueloForm(request.POST, instance=vuelo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Vuelo actualizado exitosamente.")
+            return redirect('vuelos:vuelo_list')
+    else:
+        form = VueloForm(instance=vuelo)
+    return render(request, 'vuelos/editar_vuelo.html', {'form': form, 'vuelo': vuelo})
+
+@login_required
+def eliminar_vuelo(request, vuelo_id):
+    vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
+    if request.method == 'POST':
+        vuelo.delete()
+        messages.success(request, "Vuelo eliminado exitosamente.") 
+        return redirect('vuelos:vuelo_list')
+    return render(request, 'vuelos/confirmar_eliminar_vuelo.html', {'vuelo': vuelo})
