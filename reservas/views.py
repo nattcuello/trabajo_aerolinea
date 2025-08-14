@@ -12,6 +12,8 @@ from .forms import ReservaForm, PasajeroForm
 from pasajeros.models import Pasajero
 from collections import defaultdict
 from django.forms import formset_factory
+from django.core.exceptions import ValidationError
+
 
 
 
@@ -67,42 +69,55 @@ def crear_reserva_multiple(request, vuelo_id):
             'mensaje': 'El número de asientos no coincide con el número de pasajeros.'
         })
 
-    # Usamos formset normal en lugar de ModelFormSet
     PasajeroFormSet = formset_factory(PasajeroForm, extra=num_pasajeros)
 
     if request.method == 'POST':
         formset = PasajeroFormSet(request.POST)
         if formset.is_valid():
-            asientos_vuelo = AsientoVuelo.objects.filter(id__in=ids_asientos)
+            asientos_vuelo = AsientoVuelo.objects.select_for_update().filter(id__in=ids_asientos)
 
             if asientos_vuelo.count() != num_pasajeros:
                 return render(request, 'reservas/error.html', {
                     'mensaje': 'Asientos inválidos o incompletos.'
                 })
 
-            # Ordenamos los asientos según el orden de ids_asientos
+            # Ordenamos los asientos según ids_asientos
             asientos_vuelo_ordered = sorted(
                 asientos_vuelo, 
                 key=lambda a: ids_asientos.index(str(a.id))
             )
 
-            # Guardamos cada pasajero y su reserva
-            for form, asiento_vuelo in zip(formset, asientos_vuelo_ordered):
-                pasajero = form.save()  # Usa pasajero existente o crea uno nuevo
+            try:
+                with transaction.atomic():
+                    for form, asiento_vuelo in zip(formset, asientos_vuelo_ordered):
+                        pasajero = form.save()  # Devuelve existente o crea nuevo
 
-                reserva = Reserva(
-                    vuelo=vuelo,
-                    pasajero=pasajero,
-                    asiento=asiento_vuelo,
-                    estado='confirmada',
-                    precio_final=vuelo.precio_base
-                )
-                reserva.save()  # Guardamos la reserva
+                        # Validación: el pasajero no puede tener ya reserva en este vuelo
+                        if Reserva.objects.filter(vuelo=vuelo, pasajero=pasajero).exists():
+                            raise ValidationError(f'El pasajero {pasajero} ya tiene una reserva para este vuelo.')
 
-                asiento_vuelo.estado = 'ocupado'
-                asiento_vuelo.save()  # Marcamos el asiento como ocupado
+                        if asiento_vuelo.estado != 'disponible':
+                            raise ValidationError(f'El asiento {asiento_vuelo} ya fue reservado.')
 
-            return redirect('reservas:lista_reservas')
+                        reserva = Reserva(
+                            vuelo=vuelo,
+                            pasajero=pasajero,
+                            asiento=asiento_vuelo,
+                            estado='confirmada',
+                            precio_final=vuelo.precio_base
+                        )
+                        reserva.save()
+
+                        asiento_vuelo.estado = 'ocupado'
+                        asiento_vuelo.save()
+
+                    return redirect('reservas:lista_reservas')
+
+            except ValidationError as e:
+                return render(request, 'reservas/error.html', {'mensaje': e.messages})
+            except Exception as e:
+                return render(request, 'reservas/error.html', {'mensaje': str(e)})
+
     else:
         formset = PasajeroFormSet()
 
