@@ -7,20 +7,29 @@
             <th>Número</th>
             <th>Origen</th>
             <th>Destino</th>
-            <th>Fecha</th>
-            <th>Reservar</th>
+            <th>Fecha Salida</th> {# Cambiado a Fecha Salida para mayor claridad #}
+            <th>Estado</th> {# Añadido Estado #}
+            <th>Precio Base</th> {# Añadido Precio Base #}
+            <th>Avión</th> {# Añadido Avión #}
+            <th>Acciones</th> {# Nueva columna para acciones #}
         </tr>
     </thead>
     <tbody>
         {% for vuelo in vuelos %}
         <tr>
-            <td>{{ vuelo.numero }}</td>
+            <td>{{ vuelo.id }}</td> {# Usar id como número de vuelo si no hay un campo 'numero' #}
             <td>{{ vuelo.origen }}</td>
             <td>{{ vuelo.destino }}</td>
-            <td>{{ vuelo.fecha }}</td>
+            <td>{{ vuelo.fecha_salida|date:"Y-m-d H:i" }}</td> {# Formato de fecha #}
+            <td>{{ vuelo.get_estado_display }}</td> {# Muestra el nombre legible del estado #}
+            <td>${{ vuelo.precio_base }}</td>
+            <td>{{ vuelo.avion.modelo }}</td>
             <td>
-                <a href="{% url 'reservas:seleccionar_asiento' vuelo.id %}">Reservar</a>
-                <a href="{% url 'vuelos:crear_vuelo' %}">Crear vuelo</a>
+                <a href="{% url 'reservas:seleccionar_asiento' vuelo.id %}">Reservar</a> |
+                <a href="{% url 'vuelos:crear_vuelo' %}">Crear vuelo</a> |
+                <a href="{% url 'vuelos:vuelo_detail' vuelo.id %}">Ver Detalle</a> |
+                <a href="{% url 'vuelos:editar_vuelo' vuelo.id %}">Editar</a> | {# Enlace para editar #}
+                <a href="{% url 'vuelos:eliminar_vuelo' vuelo.id %}">Eliminar</a> {# Enlace para eliminar #}
             </td>
         </tr>
         {% endfor %}

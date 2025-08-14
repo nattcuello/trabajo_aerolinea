@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 
-# Quitar de Git pero mantener los archivos en tu PC
+# Quita db.sqlite3 y todos los __pycache__ del control de versiones
 git rm --cached db.sqlite3
-git rm --cached -r __pycache__/
+git rm --cached -r pasajeros/__pycache__/
+git rm --cached -r trabajo_aerolineas/__pycache__/
+git rm --cached -r usuarios/__pycache__/

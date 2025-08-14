@@ -11,6 +11,6 @@ urlpatterns = [
     path('crear/', views.crear_vuelo, name='crear_vuelo'),
     path('crear-avion/', views.crear_avion, name='crear_avion'),
     path('<int:vuelo_id>/', views.vuelo_detail, name='vuelo_detail'),
-    # Esta línea también debe ser eliminada
-    # path('<int:vuelo_id>/asientos/', ver_asientos_por_vuelo, name='asientos_vuelo'),
+    path('<int:vuelo_id>/editar/', views.editar_vuelo, name='editar_vuelo'),
+    path('<int:vuelo_id>/eliminar/', views.eliminar_vuelo, name='eliminar_vuelo'),
 ]
