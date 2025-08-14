@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Avion, Vuelo
-from reservas.services import AsientoService
+from .services import AsientoService  # Import correcto
 
 @receiver(post_save, sender=Avion)
 def crear_asientos_base(sender, instance, created, **kwargs):

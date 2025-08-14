@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     #apps propias
     'pasajeros',
-    'reservas',
+    'reservas.apps.ReservasConfig',
     'vuelos.apps.VuelosConfig',
     'usuarios.apps.UsuariosConfig',
     'home'

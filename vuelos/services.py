@@ -1,5 +1,8 @@
 from vuelos.models import Avion, Vuelo
-from .models import Asiento, AsientoVuelo
+
+from vuelos.models import Avion, Vuelo
+from reservas.models import Asiento, AsientoVuelo
+
 
 class AsientoService:
 
