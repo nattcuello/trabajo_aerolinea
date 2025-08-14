@@ -1,51 +1,38 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
 <h1>Crear Reservas para el Vuelo: {{ vuelo.numero }}</h1>
 <p>Complete los datos de los pasajeros para los {{ num_pasajeros }} asientos seleccionados.</p>
 
 <form method="post">
-  {% csrf_token %}
-  {{ formset.management_form }}
-  <table>
-    <tr>
-      <th>Pasajero existente</th>
-      <th>Nombre</th>
-      <th>Tipo Documento</th>
-      <th>Documento</th>
-      <th>Email</th>
-      <th>Teléfono</th>
-      <th>Fecha de Nacimiento</th>
-    </tr>
+    {% csrf_token %}
+    {{ formset.management_form }}
     {% for form in formset %}
-      <tr>
-        <td>{{ form.pasajero_existente }}</td>
-        <td>{{ form.nombre }}</td>
-        <td>{{ form.tipo_documento }}</td>
-        <td>{{ form.documento }}</td>
-        <td>{{ form.email }}</td>
-        <td>{{ form.telefono }}</td>
-        <td>{{ form.fecha_nacimiento }}</td>
-      </tr>
+        <div class="pasajero-form">
+            {{ form.as_p }}
+        </div>
     {% endfor %}
-  </table>
-  <button type="submit">Reservar</button>
+    <button type="submit">Guardar</button>
 </form>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const selects = document.querySelectorAll('select[name$="pasajero_existente"]');
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('select[name$="-pasajero_existente"]').forEach(function(select) {
+        select.addEventListener('change', function() {
+            let formGroup = select.closest('.pasajero-form');
+            if (!formGroup) return;
 
-    selects.forEach(select => {
-      select.addEventListener('change', function() {
-        const row = select.closest('tr');
-        const disableFields = select.value !== ""; // Si hay pasajero seleccionado, deshabilitar
-        row.querySelectorAll('input').forEach(input => {
-          if (!input.name.includes('pasajero_existente')) {
-            input.disabled = disableFields;
-          }
+            let camposExtra = formGroup.querySelectorAll('input, select, textarea');
+            camposExtra.forEach(function(campo) {
+                if (campo.name.endsWith('pasajero_existente')) return;
+                if (select.value) {
+                    campo.closest('p, .form-group, div').style.display = 'none';
+                    campo.value = '';
+                } else {
+                    campo.closest('p, .form-group, div').style.display = '';
+                }
+            });
         });
-      });
     });
-  });
+});
 </script>
 {% endblock %}
