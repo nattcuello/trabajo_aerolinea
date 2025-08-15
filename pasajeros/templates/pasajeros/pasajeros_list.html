@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
-  <h1>Listado de Pasajeros</h1>
+  <h1>{% trans "Listado de Pasajeros" %}</h1>
   <table border="1">
     <thead>
       <tr>
-        <th>Nombre</th>
-        <th>Tipo Doc</th>
-        <th>Documento</th>
-        <th>Email</th>
-        <th>Teléfono</th>
-        <th>Fecha Nacimiento</th>
-        <th>Edad</th>
+        <th>{% trans "Nombre" %}</th>
+        <th>{% trans "Tipo Doc" %}</th>
+        <th>{% trans "Documento" %}</th>
+        <th>{% trans "Correo Electrónico" %}</th>
+        <th>{% trans "Teléfono" %}</th>
+        <th>{% trans "Fecha Nacimiento" %}</th>
+        <th>{% trans "Edad" %}</th>
       </tr>
     </thead>
     <tbody>
@@ -30,5 +31,5 @@
   </table>
 
   <br>
-  <a href="{% url 'pasajeros:crear_pasajero' %}">Crear pasajero</a>
+  <a href="{% url 'pasajeros:crear_pasajero' %}">{% trans "Crear pasajero" %}</a>
 {% endblock %}

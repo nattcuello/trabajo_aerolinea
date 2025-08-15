@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
-  <h1>Bienvenido al Sistema de Gestión de Aerolínea</h1>
-  <p>Esto es el home funcionando correctamente.</p>
+  <h1>{% trans "Bienvenido al Sistema de Gestión de Aerolínea" %}</h1>
+  <p>{% trans "Esto es el inicio funcionando correctamente." %}</p>
 {% endblock %}

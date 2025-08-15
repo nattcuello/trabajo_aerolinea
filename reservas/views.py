@@ -13,6 +13,7 @@ from pasajeros.models import Pasajero
 from collections import defaultdict
 from django.forms import formset_factory
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 
 

@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-15 00:06+0000\n"
+"PO-Revision-Date: 2025-07-04 21:00-0300\n"
+"Last-Translator: sofi gonzalez\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: home/templates/base.html:63
+msgid "Inicio"
+msgstr "Home"
+
+#: home/templates/base.html:66
+msgid "Pasajeros"
+msgstr "Passenger"
+
+#: home/templates/base.html:67 vuelos/models.py:41
+msgid "Vuelos"
+msgstr "Flight"
+
+#: home/templates/base.html:70
+msgid "Nuevo Vuelo"
+msgstr "Nuevo Vuelo"
+
+#: home/templates/base.html:74
+msgid "Nuevo Avión"
+msgstr "New Plane"
+
+#: home/templates/base.html:77
+msgid "Hola"
+msgstr "Hi"
+
+#: home/templates/base.html:80
+msgid "Cerrar sesión"
+msgstr "Log Out"
+
+#: home/templates/base.html:83 usuarios/templates/usuarios/login.html:5
+msgid "Iniciar sesión"
+msgstr "Log in"
+
+#: home/templates/base.html:84
+msgid "Registrarse"
+msgstr "Register"
+
+#: home/templates/home/index.html:5
+msgid "Bienvenido al Sistema de Gestión de Aerolínea"
+msgstr "Welcome to the Airline Management System"
+
+#: home/templates/home/index.html:6
+msgid "Esto es el inicio funcionando correctamente."
+msgstr "This is the home page working correctly."
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:5
+msgid "Listado de Pasajeros"
+msgstr "Passenger List"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:9
+msgid "Nombre"
+msgstr "Name"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:10
+msgid "Tipo Doc"
+msgstr "Doc Type"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:11
+msgid "Documento"
+msgstr "Document"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:12
+msgid "Correo Electrónico"
+msgstr "Email"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:13
+msgid "Teléfono"
+msgstr "Phone"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:14
+msgid "Fecha Nacimiento"
+msgstr "Date of Birth"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:15
+msgid "Edad"
+msgstr "Age"
+
+#: pasajeros/templates/pasajeros/pasajeros_list.html:34
+msgid "Crear pasajero"
+msgstr "Create passenger"
+
+#: usuarios/templates/usuarios/lista_usuarios.html:5
+msgid "Lista de Usuarios"
+msgstr "List of Users"
+
+#: usuarios/templates/usuarios/login.html:9
+msgid "Ingresar"
+msgstr "Sign in"
+
+#: usuarios/templates/usuarios/registro.html:5
+msgid "Registrar Usuario"
+msgstr "Register User"
+
+#: usuarios/templates/usuarios/registro.html:9
+msgid "Datos de Usuario"
+msgstr "User Data"
+
+#: usuarios/templates/usuarios/registro.html:14
+msgid "Rol del Usuario"
+msgstr "User Role"
+
+#: usuarios/templates/usuarios/registro.html:18
+msgid "Registrar"
+msgstr "Register"
+
+#: vuelos/forms.py:10
+msgid "Modelo"
+msgstr "Model"
+
+#: vuelos/forms.py:11
+msgid "Capacidad"
+msgstr "Capacity"
+
+#: vuelos/forms.py:12
+msgid "Filas"
+msgstr "Rows"
+
+#: vuelos/forms.py:13
+msgid "Columnas"
+msgstr "Columns"
+
+#: vuelos/forms.py:21 vuelos/models.py:15
+#: vuelos/templates/vuelos/vuelo_list.html:15
+msgid "Avión"
+msgstr "Aircraft"
+
+#: vuelos/forms.py:22 vuelos/templates/vuelos/vuelo_list.html:10
+msgid "Origen"
+msgstr "Origin"
+
+#: vuelos/forms.py:23 vuelos/templates/vuelos/vuelo_list.html:11
+msgid "Destino"
+msgstr "Destination"
+
+#: vuelos/forms.py:24
+#, fuzzy
+#| msgid "Fecha Salida"
+msgid "Fecha de salida"
+msgstr "Departure Date"
+
+#: vuelos/forms.py:25
+msgid "Fecha de llegada"
+msgstr "Arrival Date"
+
+#: vuelos/forms.py:26 vuelos/templates/vuelos/vuelo_list.html:13
+msgid "Estado"
+msgstr "Status"
+
+#: vuelos/forms.py:27
+msgid "Precio base"
+msgstr "Base Price"
+
+#: vuelos/models.py:16
+msgid "Aviones"
+msgstr ""
+
+#: vuelos/models.py:21
+msgid "Programado"
+msgstr ""
+
+#: vuelos/models.py:22
+msgid "En Vuelo"
+msgstr ""
+
+#: vuelos/models.py:23
+msgid "Finalizado"
+msgstr ""
+
+#: vuelos/models.py:24
+msgid "Cancelado"
+msgstr ""
+
+#: vuelos/models.py:40
+msgid "Vuelo"
+msgstr ""
+
+#: vuelos/templates/vuelos/crear_avion.html:6
+msgid "Crear nuevo avión"
+msgstr "Create New Plane"
+
+#: vuelos/templates/vuelos/crear_avion.html:10
+#: vuelos/templates/vuelos/crear_vuelo.html:9
+msgid "Guardar"
+msgstr "Save"
+
+#: vuelos/templates/vuelos/crear_vuelo.html:5
+msgid "Cargar nuevo vuelo"
+msgstr "Create new flight"
+
+#: vuelos/templates/vuelos/vuelo_list.html:5
+msgid "Listado de Vuelos"
+msgstr "Flight List"
+
+#: vuelos/templates/vuelos/vuelo_list.html:9
+msgid "Número"
+msgstr "Number"
+
+#: vuelos/templates/vuelos/vuelo_list.html:12
+msgid "Fecha Salida"
+msgstr "Departure Date"
+
+#: vuelos/templates/vuelos/vuelo_list.html:14
+msgid "Precio Base"
+msgstr "Base Price"
+
+#: vuelos/templates/vuelos/vuelo_list.html:16
+msgid "Acciones"
+msgstr "Shares"
+
+#: vuelos/templates/vuelos/vuelo_list.html:30
+msgid "Reservar"
+msgstr "Book a Flight"
+
+#: vuelos/templates/vuelos/vuelo_list.html:31
+msgid "Crear Vuelo"
+msgstr "Create Flight"
+
+#: vuelos/templates/vuelos/vuelo_list.html:32
+msgid "Ver Detalle"
+msgstr "View Details"
+
+#: vuelos/templates/vuelos/vuelo_list.html:33
+msgid "Editar"
+msgstr "Edit"
+
+#: vuelos/templates/vuelos/vuelo_list.html:34
+msgid "Eliminar"
+msgstr "Delete"

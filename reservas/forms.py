@@ -1,6 +1,7 @@
 from django import forms
 from .models import Reserva, AsientoVuelo
 from pasajeros.models import Pasajero
+from django.utils.translation import gettext as _
 
 
 class ReservaForm(forms.ModelForm):
@@ -49,7 +50,7 @@ class PasajeroForm(forms.ModelForm):
             required_fields = ['nombre', 'tipo_documento', 'documento', 'email', 'telefono', 'fecha_nacimiento']
             for field in required_fields:
                 if not cleaned_data.get(field):
-                    self.add_error(field, 'Este campo es obligatorio si no seleccionaste un pasajero existente.')
+                    self.add_error(_(field, 'Este campo es obligatorio si no seleccionaste un pasajero existente.'))
 
         return cleaned_data
 

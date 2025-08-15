@@ -1,6 +1,8 @@
 {% load static %}
+{% load i18n %}
+
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <title>Aerolínea</title>
@@ -55,29 +57,31 @@
     </style>
 </head>
 <body>
+{% load i18n %}
+
     <nav>
-        <a href="{% url 'home:index' %}">Inicio</a>
-    
+        <a href="{% url 'home:index' %}">{% trans "Inicio" %}</a>
+
         {% if user.is_authenticated %}
-            <a href="{% url 'pasajeros:listado_pasajeros' %}">Pasajeros</a>
-            <a href="{% url 'vuelos:vuelo_list' %}">Vuelos</a>
-    
+            <a href="{% url 'pasajeros:listado_pasajeros' %}">{% trans "Pasajeros" %}</a>
+            <a href="{% url 'vuelos:vuelo_list' %}">{% trans "Vuelos" %}</a>
+
             {% if user.perfilusuario.rol == 'admin' %}
-                <a href="{% url 'vuelos:crear_vuelo' %}">Nuevo Vuelo</a>
+                <a href="{% url 'vuelos:crear_vuelo' %}">{% trans "Nuevo Vuelo" %}</a>
             {% endif %}
-    
+
             {% if user.perfilusuario.rol != 'pasajero' %}
-                <a href="{% url 'vuelos:crear_avion' %}">Nuevo Avión</a>
+                <a href="{% url 'vuelos:crear_avion' %}">{% trans "Nuevo Avión" %}</a>
             {% endif %}
-    
-            <span>Hola, {{ user.username }}</span>
+
+            <span>{% trans "Hola" %}, {{ user.username }}</span>
             <form action="{% url 'usuarios:logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit">Cerrar sesión</button>
+                <button type="submit">{% trans "Cerrar sesión" %}</button>
             </form>
         {% else %}
-            <a href="{% url 'usuarios:login' %}">Iniciar sesión</a>
-            <a href="{% url 'usuarios:registro' %}">Registrarse</a>
+            <a href="{% url 'usuarios:login' %}">{% trans "Iniciar sesión" %}</a>
+            <a href="{% url 'usuarios:registro' %}">{% trans "Registrarse" %}</a>
         {% endif %}
     </nav>
     
@@ -101,5 +105,24 @@
         {% block content %}
         {% endblock %}
     </div>
+
+    <ul class="navbar-nav ms-3">
+        <li class="nav-item">
+          <form action="{% url 'set_language' %}" method="post" class="d-flex gap-2 align-items-center">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            <button type="submit" name="language" value="es"
+                    class="btn {% if LANGUAGE_CODE == 'es' %}btn-info{% else %}btn-outline-info{% endif %} btn-sm px-3">
+                ES
+            </button>
+
+            <button type="submit" name="language" value="en"
+                    class="btn {% if LANGUAGE_CODE == 'en' %}btn-info{% else %}btn-outline-info{% endif %} btn-sm px-3">
+                EN
+            </button>
+          </form>
+        </li>
+      </ul>
 </body>
 </html>

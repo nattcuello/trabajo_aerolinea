@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Pasajero
 from .forms import PasajeroForm
+from django.utils.translation import gettext as _
 
 
 @login_required
