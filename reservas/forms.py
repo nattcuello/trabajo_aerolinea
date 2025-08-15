@@ -7,8 +7,13 @@ from django.utils.translation import gettext as _
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
-        fields = ['pasajero', 'asiento']  # Ajustar según tu modelo
+        fields = ['vuelo', 'pasajero', 'asiento']  # Incluimos vuelo
 
+    def __init__(self, *args, vuelo=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if vuelo:
+            self.fields['vuelo'].initial = vuelo
+            self.fields['vuelo'].widget = forms.HiddenInput()
 
 
 class PasajeroForm(forms.ModelForm):
@@ -45,7 +50,7 @@ class PasajeroForm(forms.ModelForm):
         cleaned_data = super().clean()
         pasajero_existente = cleaned_data.get('pasajero_existente')
 
-        # Si no se elige pasajero existente, obligamos a completar al menos nombre y documento
+        # Si no se elige pasajero existente, obligamos a completar datos
         if not pasajero_existente:
             required_fields = ['nombre', 'tipo_documento', 'documento', 'email', 'telefono', 'fecha_nacimiento']
             for field in required_fields:

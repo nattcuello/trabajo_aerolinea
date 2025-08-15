@@ -2,13 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from vuelos.models import Vuelo
 from .models import Reserva, Asiento, AsientoVuelo
-from .forms import ReservaForm
-from django.db import transaction
-import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from usuarios.decorators import role_required
 from .forms import ReservaForm, PasajeroForm
+from django.db import transaction
+from django.http import JsonResponse
+from usuarios.decorators import role_required
 from pasajeros.models import Pasajero
 from collections import defaultdict
 from django.forms import formset_factory
@@ -16,9 +13,9 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 
-
-
-# La vista `crear_reserva` se mantiene, pero es un método alternativo a `reservar_asientos`
+# ----------------------------
+# Crear reserva simple
+# ----------------------------
 @login_required
 def crear_reserva(request, vuelo_id):
     vuelo = get_object_or_404(Vuelo, pk=vuelo_id)
@@ -41,6 +38,7 @@ def crear_reserva(request, vuelo_id):
                         reserva.estado = 'confirmada'
                         reserva.precio_final = vuelo.precio_base
                         reserva.save()
+                        # Redirigimos al detalle del vuelo, no a lista general
                         return redirect('vuelos:vuelo_detail', vuelo_id=vuelo.id)
             except Exception as e:
                 form.add_error(None, f'Ocurrió un error al crear la reserva: {e}')
@@ -50,15 +48,19 @@ def crear_reserva(request, vuelo_id):
     return render(request, 'reservas/crear_reserva.html', {'form': form, 'vuelo': vuelo})
 
 
+# ----------------------------
+# Lista de reservas (solo admins y operadores)
+# ----------------------------
 @login_required
 @role_required('admin', 'operador')
 def lista_reservas(request):
-    perfil = getattr(request.user, 'perfil', None)
-    rol = perfil.rol if perfil else 'sin rol'
-    print(f"Usuario: {request.user}, rol: {rol}")
     reservas = Reserva.objects.select_related('vuelo', 'pasajero', 'asiento')
     return render(request, 'reservas/reserva_list.html', {'reservas': reservas})
 
+
+# ----------------------------
+# Crear reservas múltiples
+# ----------------------------
 @login_required
 def crear_reserva_multiple(request, vuelo_id):
     vuelo = get_object_or_404(Vuelo, id=vuelo_id)
@@ -112,7 +114,8 @@ def crear_reserva_multiple(request, vuelo_id):
                         asiento_vuelo.estado = 'ocupado'
                         asiento_vuelo.save()
 
-                    return redirect('reservas:lista_reservas')
+                    # Redirigimos al detalle del vuelo, no a lista general
+                    return redirect('vuelos:vuelo_detail', vuelo_id=vuelo.id)
 
             except ValidationError as e:
                 return render(request, 'reservas/error.html', {'mensaje': e.messages})
@@ -129,32 +132,32 @@ def crear_reserva_multiple(request, vuelo_id):
         'ids_asientos': ids_asientos,
     })
 
+
+# ----------------------------
+# Seleccionar asiento
+# ----------------------------
 @login_required
 def seleccionar_asiento(request, vuelo_id):
     vuelo = get_object_or_404(Vuelo, id=vuelo_id)
 
-    # Traemos los AsientoVuelo del vuelo y hacemos join con Asiento
     asientos_vuelo = AsientoVuelo.objects.filter(vuelo=vuelo).select_related('asiento').order_by(
         'asiento__fila', 'asiento__columna'
     )
 
-    # Construimos un diccionario por fila
     asientos_por_fila = defaultdict(list)
     for av in asientos_vuelo:
         asiento_info = {
             'id': av.id,
             'fila': av.asiento.fila,
             'columna': av.asiento.columna,
-            'tipo': getattr(av.asiento, 'tipo', ''),  # si tienes tipo
+            'tipo': getattr(av.asiento, 'tipo', ''),
             'estado_vuelo': av.estado
         }
         asientos_por_fila[av.asiento.fila].append(asiento_info)
 
-    # Si es una petición AJAX, devolvemos JSON
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'asientos': list(asientos_vuelo.values())})
 
-    # Renderizamos el template
     return render(request, 'reservas/seleccionar_asiento.html', {
         'vuelo': vuelo,
         'asientos_por_fila': dict(asientos_por_fila),
