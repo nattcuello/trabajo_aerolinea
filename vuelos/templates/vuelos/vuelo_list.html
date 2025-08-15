@@ -6,7 +6,6 @@
 <table>
     <thead>
         <tr>
-<<<<<<< HEAD
             <th>{% trans "Número" %}</th>
             <th>{% trans "Origen" %}</th>
             <th>{% trans "Destino" %}</th>
@@ -15,16 +14,6 @@
             <th>{% trans "Precio Base" %}</th>
             <th>{% trans "Avión" %}</th>
             <th>{% trans "Acciones" %}</th>
-=======
-            <th>Número</th>
-            <th>Origen</th>
-            <th>Destino</th>
-            <th>Fecha Salida</th>
-            <th>Estado</th>
-            <th>Precio Base</th>
-            <th>Avión</th>
-            <th>Acciones</th>
->>>>>>> 7e3d3b6ab914d3de7a70b3819bd9fb3c296680f2
         </tr>
     </thead>
     <tbody>
@@ -38,25 +27,11 @@
             <td>${{ vuelo.precio_base }}</td>
             <td>{{ vuelo.avion.modelo }}</td>
             <td>
-<<<<<<< HEAD
                 <a href="{% url 'reservas:seleccionar_asiento' vuelo.id %}">{% trans "Reservar" %}</a> |
                 <a href="{% url 'vuelos:crear_vuelo' %}">{% trans "Crear Vuelo" %}</a> |
                 <a href="{% url 'vuelos:vuelo_detail' vuelo.id %}">{% trans "Ver Detalle" %}</a> |
                 <a href="{% url 'vuelos:editar_vuelo' vuelo.id %}">{% trans "Editar" %}</a> |
                 <a href="{% url 'vuelos:eliminar_vuelo' vuelo.id %}">{% trans "Eliminar" %}</a>
-=======
-                <a href="{% url 'vuelos:vuelo_detail' vuelo.id %}">Ver Detalle</a>
-                
-                {% if user.perfil.rol == 'pasajero' or user.perfil.rol == 'admin' %}
-                    | <a href="{% url 'reservas:seleccionar_asiento' vuelo.id %}">Reservar</a>
-                {% endif %}
-                
-                {% if user.perfil.rol == 'admin' or user.perfil.rol == 'operador' %}
-                    | <a href="{% url 'vuelos:crear_vuelo' %}">Crear vuelo</a>
-                    | <a href="{% url 'vuelos:editar_vuelo' vuelo.id %}">Editar</a>
-                    | <a href="{% url 'vuelos:eliminar_vuelo' vuelo.id %}">Eliminar</a>
-                {% endif %}
->>>>>>> 7e3d3b6ab914d3de7a70b3819bd9fb3c296680f2
             </td>
         </tr>
         {% endfor %}
