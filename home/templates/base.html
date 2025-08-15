@@ -63,14 +63,21 @@
         <a href="{% url 'home:index' %}">{% trans "Inicio" %}</a>
 
         {% if user.is_authenticated %}
-            <a href="{% url 'pasajeros:listado_pasajeros' %}">Pasajeros</a>
-            <a href="{% url 'vuelos:vuelo_list' %}">Vuelos</a>
+            
+            {% if user.perfilusuario.rol == 'pasajero' %}
+                <!-- PASAJERO solo ve vuelos -->
+                <a href="{% url 'vuelos:vuelo_list' %}">Vuelos</a>
+            
+            {% elif user.perfilusuario.rol == 'operador' %}
+                <!-- OPERADOR ve pasajeros y vuelos -->
+                <a href="{% url 'pasajeros:listado_pasajeros' %}">Pasajeros</a>
+                <a href="{% url 'vuelos:vuelo_list' %}">Vuelos</a>
     
-            {% if user.perfilusuario.rol == 'admin' %}
+            {% elif user.perfilusuario.rol == 'admin' %}
+                <!-- ADMIN ve todo -->
+                <a href="{% url 'pasajeros:listado_pasajeros' %}">Pasajeros</a>
+                <a href="{% url 'vuelos:vuelo_list' %}">Vuelos</a>
                 <a href="{% url 'vuelos:crear_vuelo' %}">Nuevo Vuelo</a>
-            {% endif %}
-    
-            {% if user.perfilusuario.rol != 'pasajero' %}
                 <a href="{% url 'vuelos:crear_avion' %}">Nuevo Avión</a>
             {% endif %}
 
