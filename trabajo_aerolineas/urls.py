@@ -22,6 +22,7 @@ urlpatterns += i18n_patterns(
     path('', include('home.urls')),  # raíz ahora soporta prefijo de idioma
     path('reservas/', include('reservas.urls', namespace='reservas')),
     path('sentry-debug/', trigger_error),
+    path('api-auth/', include('rest_framework.urls'))
 )
 
 # Servir archivos estáticos y media en desarrollo

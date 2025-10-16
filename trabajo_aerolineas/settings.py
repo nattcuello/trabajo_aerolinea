@@ -43,7 +43,11 @@ INSTALLED_APPS = [
     'reservas.apps.ReservasConfig',
     'vuelos.apps.VuelosConfig',
     'usuarios.apps.UsuariosConfig',
-    'home'
+    'home',
+
+    #API
+    'rest_framework',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -148,28 +152,28 @@ LOGOUT_REDIRECT_URL = 'home:index'
 #importaciones hechas en clase
 import os 
 
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.logging import LoggingIntegration
+#import sentry_sdk
+#from sentry_sdk.integrations.django import DjangoIntegration
+#from sentry_sdk.integrations.logging import LoggingIntegration
 import logging
 
-sentry_logging = LoggingIntegration(
-    level=logging.INFO,  # Capture info and above as breadcrumbs
-    event_level=logging.ERROR  # Send errors as events
+#sentry_logging = LoggingIntegration(
+#    level=logging.INFO,  # Capture info and above as breadcrumbs
+#    event_level=logging.ERROR  # Send errors as events
 
-)
+#)
 
-sentry_sdk.init(
-    dsn="https://515b6cc12b05da0a649aeeb005934e3d@o4509805221117953.ingest.us.sentry.io/4509805238550528",
-        integrations= [
-        DjangoIntegration(),
-        sentry_logging
+#sentry_sdk.init(
+#    dsn="https://515b6cc12b05da0a649aeeb005934e3d@o4509805221117953.ingest.us.sentry.io/4509805238550528",
+#        integrations= [
+#        DjangoIntegration(),
+#       sentry_logging
        
-    ],
+#   ],
     # Add data like request headers and IP for users,
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
-    send_default_pii=True,
-)
+#   send_default_pii=True,
+#)
 
 LOGGING = {
     'version': 1,
@@ -183,4 +187,12 @@ LOGGING = {
         "level": "INFO",
         "handlers": ["console"],
     },
+}
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
 }
