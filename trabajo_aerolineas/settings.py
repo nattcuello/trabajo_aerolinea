@@ -44,6 +44,12 @@ INSTALLED_APPS = [
     'vuelos.apps.VuelosConfig',
     'usuarios.apps.UsuariosConfig',
     'home'
+
+    #API
+    'rest_framework',
+    'rest_framework.authtoken',
+    'django_filters',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -148,7 +154,7 @@ LOGOUT_REDIRECT_URL = 'home:index'
 #importaciones hechas en clase
 import os 
 
-import sentry_sdk
+""" import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 import logging
@@ -170,7 +176,7 @@ sentry_sdk.init(
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
 )
-
+ """
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -183,4 +189,18 @@ LOGGING = {
         "level": "INFO",
         "handlers": ["console"],
     },
+}
+
+# Configuración de REST Framework
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ],
 }
