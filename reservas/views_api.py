@@ -8,7 +8,7 @@ from .serializers import (
     ReservaSerializer, ReservaCreateSerializer
 )
 from pasajeros.serializers import PasajeroSerializer
-from trabajo_aerolinea.permissions import SoloAdminPuedeModificar
+from trabajo_aerolineas.permissions import SoloAdminPuedeModificar
 
 class AsientoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Asiento.objects.select_related("avion")

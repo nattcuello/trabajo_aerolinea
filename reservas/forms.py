@@ -23,15 +23,16 @@ class PasajeroForm(forms.ModelForm):
         label="Seleccionar pasajero existente"
     )
 
-    nombre = forms.CharField(required=False)
-    tipo_documento = forms.CharField(required=False)
-    documento = forms.CharField(required=False)
-    email = forms.EmailField(required=False)
-    telefono = forms.CharField(required=False)
+    nombre = forms.CharField(required=False, label=_("Nombre"))
+    tipo_documento = forms.CharField(required=False, label=_("Tipo documento"))
+    documento = forms.CharField(required=False, label=_("Documento"))
+    email = forms.EmailField(required=False, label=_("Email"))
+    telefono = forms.CharField(required=False, label=_("Teléfono"))
     fecha_nacimiento = forms.DateField(
         required=False,
         input_formats=['%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y'],
-        widget=forms.DateInput(attrs={'placeholder': 'MM-DD-YYYY'})
+        widget=forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD', 'type': 'date'}),
+        label=_("Fecha de nacimiento"),
     )
 
     class Meta:
@@ -45,19 +46,20 @@ class PasajeroForm(forms.ModelForm):
             'telefono',
             'fecha_nacimiento'
         ]
-
     def clean(self):
-        cleaned_data = super().clean()
-        pasajero_existente = cleaned_data.get('pasajero_existente')
+        cleaned = super().clean()
+        pasajero_existente = cleaned.get('pasajero_existente')
 
-        # Si no se elige pasajero existente, obligamos a completar datos
+        # Si NO se elige pasajero existente, obligamos a completar datos
         if not pasajero_existente:
             required_fields = ['nombre', 'tipo_documento', 'documento', 'email', 'telefono', 'fecha_nacimiento']
             for field in required_fields:
-                if not cleaned_data.get(field):
-                    self.add_error(_(field, 'Este campo es obligatorio si no seleccionaste un pasajero existente.'))
-
-        return cleaned_data
+                if not cleaned.get(field):
+                    self.add_error(
+                        field,
+                        _("Este campo es obligatorio si no seleccionaste un pasajero existente.")
+                    )
+        return cleaned
 
     def save(self, commit=True):
         pasajero_existente = self.cleaned_data.get('pasajero_existente')
