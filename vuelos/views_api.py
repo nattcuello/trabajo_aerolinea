@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Avion, Vuelo
 from .serializers import AvionSerializer, VueloSerializer
-from trabajo_aerolineas.permissions import SoloAdminPuedeModificar
+from trabajo_aerolinea.permissions import SoloAdminPuedeModificar
+
 
 class AvionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Avion.objects.all()
