@@ -14,7 +14,7 @@ urlpatterns = [
 ]
 
 # Rutas que sí dependen del idioma
-urlpatterns += i18n_patterns(
+urlpatterns = ( 
     path('admin/', admin.site.urls),
     path('vuelos/', include(('vuelos.urls', 'vuelos'), namespace='vuelos')),
     path('pasajeros/', include(('pasajeros.urls', 'pasajeros'), namespace='pasajeros')),
@@ -22,7 +22,8 @@ urlpatterns += i18n_patterns(
     path('', include('home.urls')),  # raíz ahora soporta prefijo de idioma
     path('reservas/', include('reservas.urls', namespace='reservas')),
     path('sentry-debug/', trigger_error),
-    path('api-auth/', include('rest_framework.urls'))
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/', include('trabajo_aerolinea.trabajo_aerolineas.api_urls')),
 )
 
 # Servir archivos estáticos y media en desarrollo
