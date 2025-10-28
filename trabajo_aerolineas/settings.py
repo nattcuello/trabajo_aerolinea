@@ -60,10 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-<<<<<<< HEAD
-=======
-    
->>>>>>> 9a0ebeb20b9d7d5d879a7402399989b5b15c2063
+
 ]
 
 ROOT_URLCONF = 'trabajo_aerolineas.urls'
