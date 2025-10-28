@@ -1,9 +1,27 @@
 .environment/
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 
 # Quita db.sqlite3 y todos los __pycache__ del control de versiones
 git rm --cached db.sqlite3
 git rm --cached -r pasajeros/__pycache__/
 git rm --cached -r trabajo_aerolineas/__pycache__/
 git rm --cached -r usuarios/__pycache__/
+
+# Entorno / IDE
+.env
+.venv/
+.vscode/
+.idea/
+
+# Django
+db.sqlite3
+*.sqlite3
+/media/
+staticfiles/
+
+# System
+.DS_Store
+Thumbs.db
