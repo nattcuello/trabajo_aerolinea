@@ -29,6 +29,8 @@ class AsientoVuelo(models.Model):
     asiento = models.ForeignKey(Asiento, on_delete=models.CASCADE)
     estado = models.CharField(max_length=20, choices=[('disponible', 'Disponible'), ('ocupado', 'Ocupado')], default='disponible')
 
+    class Meta:
+        unique_together = [('vuelo', 'asiento')]
 
 class Reserva(models.Model):
     ESTADO_CHOICES = [

@@ -43,17 +43,27 @@ INSTALLED_APPS = [
     'reservas.apps.ReservasConfig',
     'vuelos.apps.VuelosConfig',
     'usuarios.apps.UsuariosConfig',
-    'home'
+    'home',
+
+    #API
+    'rest_framework',
+    'rest_framework.authtoken',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 9a0ebeb20b9d7d5d879a7402399989b5b15c2063
 ]
 
 ROOT_URLCONF = 'trabajo_aerolineas.urls'
@@ -121,7 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [ BASE_DIR / "static" ]
 
 
@@ -138,29 +148,29 @@ LOGOUT_REDIRECT_URL = 'home:index'
 #importaciones hechas en clase
 import os 
 
-import sentry_sdk
+""" import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 import logging
 
-sentry_logging = LoggingIntegration(
-    level=logging.INFO,  # Capture info and above as breadcrumbs
-    event_level=logging.ERROR  # Send errors as events
+#sentry_logging = LoggingIntegration(
+#    level=logging.INFO,  # Capture info and above as breadcrumbs
+#    event_level=logging.ERROR  # Send errors as events
 
-)
+#)
 
-sentry_sdk.init(
-    dsn="https://515b6cc12b05da0a649aeeb005934e3d@o4509805221117953.ingest.us.sentry.io/4509805238550528",
-        integrations= [
-        DjangoIntegration(),
-        sentry_logging
+#sentry_sdk.init(
+#    dsn="https://515b6cc12b05da0a649aeeb005934e3d@o4509805221117953.ingest.us.sentry.io/4509805238550528",
+#        integrations= [
+#        DjangoIntegration(),
+#       sentry_logging
        
-    ],
+#   ],
     # Add data like request headers and IP for users,
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
 )
-
+ """
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -174,3 +184,21 @@ LOGGING = {
         "handlers": ["console"],
     },
 }
+
+# Configuración de REST Framework
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ],
+}
+
+# --- MEDIA (subidas de usuarios) ---
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
