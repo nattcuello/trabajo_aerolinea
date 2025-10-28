@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from .models import Reserva, AsientoVuelo
 from pasajeros.models import Pasajero
 
@@ -16,12 +17,14 @@ class ReservaForm(forms.ModelForm):
 
 
 class PasajeroForm(forms.ModelForm):
+    # Campo extra (no del modelo) para seleccionar un pasajero ya existente
     pasajero_existente = forms.ModelChoiceField(
         queryset=Pasajero.objects.all(),
         required=False,
         label="Seleccionar pasajero existente"
     )
 
+    # Campos del modelo (sin comas al final)
     nombre = forms.CharField(required=False, label=_("Nombre"))
     tipo_documento = forms.CharField(required=False, label=_("Tipo documento"))
     documento = forms.CharField(required=False, label=_("Documento"))
@@ -31,13 +34,12 @@ class PasajeroForm(forms.ModelForm):
         required=False,
         input_formats=['%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y'],
         widget=forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD', 'type': 'date'}),
-        label=_("Fecha de nacimiento"),
+        label=("Fecha de nacimiento"),
     )
 
     class Meta:
         model = Pasajero
         fields = [
-            'pasajero_existente',
             'nombre',
             'tipo_documento',
             'documento',
@@ -53,19 +55,13 @@ class PasajeroForm(forms.ModelForm):
         if not pasajero_existente:
             required_fields = ['nombre', 'tipo_documento', 'documento', 'email', 'telefono', 'fecha_nacimiento']
             for field in required_fields:
-<<<<<<< HEAD
-                if not cleaned_data.get(field):
-                    self.add_error(field, 'Este campo es obligatorio si no seleccionaste un pasajero existente.')
-
-        return cleaned_data
-=======
                 if not cleaned.get(field):
                     self.add_error(
                         field,
                         _("Este campo es obligatorio si no seleccionaste un pasajero existente.")
                     )
         return cleaned
->>>>>>> 9a0ebeb20b9d7d5d879a7402399989b5b15c2063
+
 
     def save(self, commit=True):
         pasajero_existente = self.cleaned_data.get('pasajero_existente')
