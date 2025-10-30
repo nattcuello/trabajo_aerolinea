@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'vuelos.apps.VuelosConfig',
     'usuarios.apps.UsuariosConfig',
     'home',
+    'core',
 
     #API
     'rest_framework',
