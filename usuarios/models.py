@@ -1,15 +1,16 @@
 # usuarios/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from core.models import SoftDeleteModel 
 
-class PerfilUsuario(models.Model):
+class PerfilUsuario(SoftDeleteModel):
     ROLES = [
         ('admin', 'Administrador'),
         ('operador', 'Operador'),
         ('pasajero', 'Pasajero'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.PROTECT, related_name='perfilusuario')
     rol = models.CharField(max_length=20, choices=ROLES, default='pasajero')
 
     def __str__(self):

@@ -1,7 +1,8 @@
 from django.db import models
 from datetime import date
+from core.models import SoftDeleteModel
 
-class Pasajero(models.Model):
+class Pasajero(SoftDeleteModel):
     TIPO_DOCUMENTO_CHOICES = [
         ('DNI', 'DNI'),
         ('PAS', 'Pasaporte'),
@@ -12,7 +13,7 @@ class Pasajero(models.Model):
 
     nombre = models.CharField(max_length=100)
     tipo_documento = models.CharField(max_length=10, choices=TIPO_DOCUMENTO_CHOICES)
-    documento = models.CharField(max_length=30, unique=True)
+    documento = models.CharField(max_length=30)
     email = models.EmailField()
     telefono = models.CharField(max_length=20)
     fecha_nacimiento = models.DateField()
@@ -28,6 +29,13 @@ class Pasajero(models.Model):
         verbose_name = 'Pasajero'
         verbose_name_plural = 'Pasajeros'
         ordering = ['nombre']
+        # Enforce "unique while active"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['documento', 'is_active'],
+                name='uniq_pasajero_documento_while_active',
+            )
+        ]
 
     def __str__(self):
         return f"{self.nombre} ({self.tipo_documento} {self.documento})"

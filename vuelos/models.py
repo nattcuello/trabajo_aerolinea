@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from core.models import SoftDeleteModel
 
-class Avion(models.Model):
+class Avion(SoftDeleteModel):
     modelo = models.CharField(max_length=100)
     capacidad = models.PositiveIntegerField()
     filas = models.PositiveIntegerField()
@@ -17,7 +18,7 @@ class Avion(models.Model):
         verbose_name = "Avión"
         verbose_name_plural = "Aviones"
 
-class Vuelo(models.Model):
+class Vuelo(SoftDeleteModel):
     ESTADOS = [
         ('programado', 'Programado'),
         ('en_vuelo', 'En Vuelo'),
@@ -25,7 +26,7 @@ class Vuelo(models.Model):
         ('cancelado', 'Cancelado'),
     ]
 
-    avion = models.ForeignKey(Avion, on_delete=models.CASCADE, related_name='vuelos')
+    avion = models.ForeignKey(Avion, on_delete=models.PROTECT, related_name='vuelos')
     origen = models.CharField(max_length=100)
     destino = models.CharField(max_length=100)
     fecha_salida = models.DateTimeField()

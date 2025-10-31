@@ -3,46 +3,50 @@ from django.core.exceptions import ValidationError
 from vuelos.models import Vuelo
 from pasajeros.models import Pasajero
 from vuelos.models import Vuelo, Avion
+from core.models import SoftDeleteModel
 
 
-
-class Asiento(models.Model):
-    avion = models.ForeignKey(Avion, on_delete=models.CASCADE, related_name="asientos")
+class Asiento(SoftDeleteModel):
+    avion = models.ForeignKey(Avion, on_delete=models.PROTECT, related_name="asientos")
     fila = models.IntegerField()
     columna = models.CharField(max_length=1)
     tipo = models.CharField(max_length=20, choices=[
         ('ventana', 'Ventana'),
         ('pasillo', 'Pasillo'),
         ('medio', 'Medio')
-    ])
+    ]
+)
     estado = models.CharField(max_length=20, choices=[
         ('disponible', 'Disponible'),
         ('ocupado', 'Ocupado')
-    ], default='disponible')
+    ], 
+    default='disponible'
+    )
 
     def __str__(self):
         return f"Asiento {self.fila}{self.columna} - {self.tipo} ({self.estado})"
 
 
-class AsientoVuelo(models.Model):
-    vuelo = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name="asientos_vuelo")
-    asiento = models.ForeignKey(Asiento, on_delete=models.CASCADE)
+class AsientoVuelo(SoftDeleteModel):
+    vuelo = models.ForeignKey(Vuelo, on_delete=models.PROTECT, related_name="asientos_vuelo")
+    asiento = models.ForeignKey(Asiento, on_delete=models.PROTECT)
     estado = models.CharField(max_length=20, choices=[('disponible', 'Disponible'), ('ocupado', 'Ocupado')], default='disponible')
 
     class Meta:
         unique_together = [('vuelo', 'asiento')]
 
-class Reserva(models.Model):
+    def __str__(self):
+     return f"Asiento {self.asiento} en vuelo {self.vuelo}"
+    
+class Reserva(SoftDeleteModel):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
         ('confirmada', 'Confirmada'),
         ('cancelada', 'Cancelada'),
     ]
 
-
-
-    pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, related_name="reservas")
-    vuelo = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name="reservas")
+    pasajero = models.ForeignKey(Pasajero, on_delete=models.PROTECT, related_name="reservas")
+    vuelo = models.ForeignKey(Vuelo, on_delete=models.PROTECT, related_name="reservas")
     asiento = models.OneToOneField(AsientoVuelo, on_delete=models.PROTECT) # PROTECT para evitar borrar asiento reservado
     fecha_reserva = models.DateTimeField(auto_now_add=True)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
