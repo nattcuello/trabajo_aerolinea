@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from rest_framework.routers import DefaultRouter
+from .views_api import PasajeroViewSet
 
 urlpatterns = [
     path('', views.lista_pasajeros, name='listado_pasajeros'),
@@ -8,3 +10,8 @@ urlpatterns = [
  
 
 ]
+
+router = DefaultRouter()
+router.register(r"pasajeros", PasajeroViewSet, basename="pasajero")
+
+urlpatterns = router.urls

@@ -1,47 +1,32 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django.db import transaction
+# reservas/views_api.py
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from core.viewsets import SoftDeleteModelViewSet
 from .models import Asiento, AsientoVuelo, Reserva
-from .serializers import AsientoSerializer, AsientoVueloSerializer, ReservaSerializer, ReservaCreateSerializer
-from pasajeros.serializers import PasajeroSerializer
-from trabajo_aerolineas.permissions import IsAdminOrOperadorOrReadOnly
+from .serializers import AsientoSerializer, AsientoVueloSerializer, ReservaSerializer
 
-class AsientoViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Asiento.objects.select_related("avion")
+class AsientoViewSet(SoftDeleteModelViewSet):
+    queryset = Asiento.objects.select_related("avion").all()
     serializer_class = AsientoSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["avion", "tipo", "estado", "is_active"]
+    search_fields = ["tipo", "estado"]
+    ordering_fields = ["fila", "columna", "id"]
 
-class AsientoVueloViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = AsientoVuelo.objects.select_related("vuelo","asiento","asiento__avion")
+class AsientoVueloViewSet(SoftDeleteModelViewSet):
+    queryset = AsientoVuelo.objects.select_related("vuelo", "asiento").all()
     serializer_class = AsientoVueloSerializer
-    def get_queryset(self):
-        v = self.request.query_params.get("vuelo")
-        return super().get_queryset().filter(vuelo_id=v) if v else super().get_queryset()
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["vuelo", "asiento", "estado", "is_active"]
+    search_fields = ["estado", "vuelo__origen", "vuelo__destino"]
+    ordering_fields = ["id"]
 
-class ReservaViewSet(viewsets.ModelViewSet):
-    queryset = Reserva.objects.select_related("vuelo","pasajero","asiento","asiento__asiento","asiento__vuelo")
+class ReservaViewSet(SoftDeleteModelViewSet):
+    queryset = Reserva.objects.select_related("pasajero", "vuelo", "asiento").all()
     serializer_class = ReservaSerializer
-    permission_classes = [IsAdminOrOperadorOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ["pasajero", "vuelo", "estado", "is_active"]
+    search_fields = ["pasajero__nombre", "vuelo__origen", "vuelo__destino"]
+    ordering_fields = ["fecha_reserva", "precio_final", "id"]
 
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        ser = ReservaCreateSerializer(data=request.data)
-        ser.is_valid(raise_exception=True)
-        reserva = ser.save()
-        return Response(ReservaSerializer(reserva).data, status=status.HTTP_201_CREATED)
-
-    @action(detail=False, methods=["get"], url_path="por-vuelo")
-    def por_vuelo(self, request):
-        vuelo_id = request.query_params.get("vuelo")
-        if not vuelo_id: return Response({"detail":"Falta 'vuelo'."}, status=400)
-        rs = self.get_queryset().filter(vuelo_id=vuelo_id).select_related("pasajero")
-        pasajeros = [r.pasajero for r in rs]
-        return Response(PasajeroSerializer(pasajeros, many=True).data)
-
-    @action(detail=False, methods=["get"], url_path="activas-por-pasajero")
-    def activas_por_pasajero(self, request):
-        pid = request.query_params.get("pasajero")
-        if not pid: return Response({"detail":"Falta 'pasajero'."}, status=400)
-        rs = self.get_queryset().filter(pasajero_id=pid, estado__in=["pendiente","confirmada"])
-        return Response(ReservaSerializer(rs, many=True).data)
 

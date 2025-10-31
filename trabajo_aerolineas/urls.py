@@ -22,7 +22,13 @@ urlpatterns = [
     path('sentry-debug/', trigger_error),
     path("api-auth/", include("rest_framework.urls")),
     path("api/", include(api_urls)),
+    path("admin/", admin.site.urls),
+    path("api/", include("pasajeros.urls")),
+    path("api/", include("vuelos.urls")),
+    path("api/", include("reservas.urls")),
+    path("api/", include("usuarios.urls")),
 ]
+
 
 # Rutas que sí dependen del idioma
 
