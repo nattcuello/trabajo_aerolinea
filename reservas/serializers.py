@@ -1,49 +1,39 @@
+# reservas/serializers.py
 from rest_framework import serializers
+from core.serializers_mixins import AuditFieldsSerializer, IntegrityFriendlyMixin
 from .models import Asiento, AsientoVuelo, Reserva
-from vuelos.models import Vuelo
 from pasajeros.models import Pasajero
+from vuelos.models import Vuelo
 
-class AsientoSerializer(serializers.ModelSerializer):
-    class Meta:
+class AsientoSerializer(IntegrityFriendlyMixin, AuditFieldsSerializer):
+    class Meta(AuditFieldsSerializer.Meta):
         model = Asiento
         fields = "__all__"
+        read_only_fields = AuditFieldsSerializer.Meta.read_only_fields
 
-class AsientoVueloSerializer(serializers.ModelSerializer):
-    asiento = AsientoSerializer(read_only=True)
-    asiento_id = serializers.PrimaryKeyRelatedField(
-        queryset=Asiento.objects.all(), source="asiento", write_only=True
-    )
-    class Meta:
+
+class AsientoVueloSerializer(IntegrityFriendlyMixin, AuditFieldsSerializer):
+    class Meta(AuditFieldsSerializer.Meta):
         model = AsientoVuelo
-        fields = ["id","vuelo","asiento","asiento_id","estado"]
+        fields = "__all__"
+        read_only_fields = AuditFieldsSerializer.Meta.read_only_fields
 
-class ReservaSerializer(serializers.ModelSerializer):
-    class Meta:
+
+class ReservaSerializer(IntegrityFriendlyMixin, AuditFieldsSerializer):
+    class Meta(AuditFieldsSerializer.Meta):
         model = Reserva
         fields = "__all__"
-        read_only_fields = ["fecha_reserva", "precio_final"]
+        read_only_fields = AuditFieldsSerializer.Meta.read_only_fields + ("fecha_reserva",)
 
-class ReservaCreateSerializer(serializers.Serializer):
-    vuelo_id = serializers.IntegerField()
-    pasajero_id = serializers.IntegerField()
-    asientovuelo_id = serializers.IntegerField()
+    def validate(self, attrs):
+        pasajero = attrs.get("pasajero")
+        vuelo = attrs.get("vuelo")
 
-    def create(self, data):
-        vuelo = Vuelo.objects.get(pk=data["vuelo_id"])
-        pasajero = Pasajero.objects.get(pk=data["pasajero_id"])
-        av = AsientoVuelo.objects.select_related("vuelo").get(pk=data["asientovuelo_id"])
-        if av.vuelo_id != vuelo.id:
-            raise serializers.ValidationError("El asiento no pertenece a ese vuelo.")
-        if getattr(av, "estado", "disponible") != "disponible":
-            raise serializers.ValidationError("El asiento ya no está disponible.")
-        if Reserva.objects.filter(vuelo=vuelo, pasajero=pasajero).exists():
-            raise serializers.ValidationError("El pasajero ya tiene una reserva en este vuelo.")
-        reserva = Reserva.objects.create(
-            vuelo=vuelo, pasajero=pasajero, asiento=av,
-            estado="confirmada", precio_final=vuelo.precio_base
-        )
-        try:
-            av.estado = "ocupado"; av.save(update_fields=["estado"])
-        except Exception:
-            pass
-        return reserva
+        if pasajero and vuelo:
+            existe = Reserva.objects.filter(pasajero=pasajero, vuelo=vuelo)
+            if self.instance:
+                existe = existe.exclude(pk=self.instance.pk)
+            if existe.exists():
+                raise serializers.ValidationError({"pasajero": "Ya existe una reserva activa para este pasajero en este vuelo."})
+
+        return attrs
