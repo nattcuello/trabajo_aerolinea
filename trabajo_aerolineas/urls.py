@@ -8,6 +8,8 @@ from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import set_language
 from . import api_urls
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+
 def trigger_error(request):
     1/0
 
@@ -27,6 +29,9 @@ urlpatterns = [
     path("api/", include("vuelos.urls")),
     path("api/", include("reservas.urls")),
     path("api/", include("usuarios.urls")),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
 
 

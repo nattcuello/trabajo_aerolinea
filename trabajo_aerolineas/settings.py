@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -195,6 +196,13 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Trabajo Aerolínea API",
+    "DESCRIPTION": "API con soft-delete, permisos por rol y gestión de vuelos, reservas y pasajeros.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 # --- MEDIA (subidas de usuarios) ---
