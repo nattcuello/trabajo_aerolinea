@@ -1,9 +1,10 @@
 # reservas/serializers.py
 from rest_framework import serializers
 from core.serializers_mixins import AuditFieldsSerializer, IntegrityFriendlyMixin
-from .models import Asiento, AsientoVuelo, Reserva
+from .models import Asiento, AsientoVuelo, Reserva, Boleto
 from pasajeros.models import Pasajero
 from vuelos.models import Vuelo
+
 
 class AsientoSerializer(IntegrityFriendlyMixin, AuditFieldsSerializer):
     class Meta(AuditFieldsSerializer.Meta):
@@ -37,3 +38,9 @@ class ReservaSerializer(IntegrityFriendlyMixin, AuditFieldsSerializer):
                 raise serializers.ValidationError({"pasajero": "Ya existe una reserva activa para este pasajero en este vuelo."})
 
         return attrs
+
+class BoletoSerializer(IntegrityFriendlyMixin, AuditFieldsSerializer):
+    class Meta(AuditFieldsSerializer.Meta):
+        model = Boleto
+        fields = "__all__"
+        read_only_fields = AuditFieldsSerializer.Meta.read_only_fields

@@ -73,3 +73,14 @@ class Reserva(SoftDeleteModel):
         verbose_name_plural = "Reservas"
         ordering = ['-fecha_reserva']
 
+class Boleto(SoftDeleteModel):
+    """
+    Boleto emitido para una reserva confirmada.
+    OneToOne para asegurar un solo boleto por reserva.
+    """
+    reserva = models.OneToOneField("Reserva", on_delete=models.CASCADE, related_name="boleto")
+    codigo = models.CharField(max_length=20, unique=True)
+    emitido_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.codigo
