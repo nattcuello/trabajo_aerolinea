@@ -191,7 +191,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+        "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
@@ -207,7 +207,21 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API con soft-delete, permisos por rol y gestión de vuelos, reservas y pasajeros.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SWAGGER_UI_SETTINGS": {"persistAuthorization": True},
+    "SECURITY": [{"TokenAuth": []}],  # ⬅️ aplica por defecto a todo
+    "COMPONENTS": {
+        "securitySchemes": {
+            "TokenAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+                "description": "Usar el formato: **Token &lt;tu_token&gt;**",
+            }
+        }
+    },
 }
+
 
 # --- MEDIA (subidas de usuarios) ---
 MEDIA_URL = "/media/"

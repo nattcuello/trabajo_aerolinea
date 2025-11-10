@@ -2,7 +2,7 @@
 from django.urls import path
 from . import views
 from rest_framework.routers import DefaultRouter
-from .views_api import AvionViewSet, VueloViewSet
+from api.views_vuelos import AvionViewSet, VueloViewSet
 # La línea siguiente ya no es necesaria y causaba el error
 # from reservas.views import ver_asientos_por_vuelo 
 

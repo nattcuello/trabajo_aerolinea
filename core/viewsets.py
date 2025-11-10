@@ -18,11 +18,23 @@ class SoftDeleteModelViewSet(viewsets.ModelViewSet):
     ordering = ("id",)
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        include_inactive = self.request.query_params.get("include_inactive")
-        if include_inactive not in ("1", "true", "True"):
-            qs = qs.filter(is_active=True)
-        return qs
+         """
+         - Por defecto: sólo activos (is_active=True).
+         - Si ?include_inactive=1|true|True => ignora el manager filtrado y usa _base_manager
+         para traer TODOS (activos + inactivos).
+         """
+         include_inactive = self.request.query_params.get("include_inactive")
+        # modelo asociado al qs que definiste en el ViewSet hijo
+         model = super().get_queryset().model
+
+         if include_inactive in ("1", "true", "True"):
+        # _base_manager evita el filtro de managers custom (ActiveQuerySet, etc.)
+            qs = model._base_manager.all()
+         else:
+        # comportamiento normal: sólo activos
+            qs = model._base_manager.all().filter(is_active=True)
+
+         return qs
 
     def perform_destroy(self, instance):
         # soft delete (no cascada)
@@ -44,10 +56,35 @@ class SoftDeleteModelViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="restore")
     def restore(self, request, pk=None):
-        obj = self.get_object()
+        """
+        Restaura un registro soft-deleted.
+        Ignora el manager filtrado (ActiveQuerySet) usando _base_manager.
+        """
+        model = super().get_queryset().model
+        try:
+            obj = model._base_manager.get(pk=pk)  # ← evita el filtro de activos
+        except model.DoesNotExist:
+            return Response(
+                {"detail": f"No {model.__name__} matches the given query."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         if getattr(obj, "is_active", True):
-            return Response({"detail": "El registro ya está activo."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "El registro ya está activo."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Reactivar
         obj.is_active = True
-        # no tocamos deleted_at/deleted_by para auditoría, salvo que quieras limpiarlos
-        obj.save(update_fields=["is_active"])
+        # (Opcional) limpiar campos de auditoría
+        if hasattr(obj, "deleted_at"):
+            obj.deleted_at = None
+        if hasattr(obj, "deleted_by"):
+            obj.deleted_by = None
+
+        # Guardar cambios
+        fields = [f for f in ["is_active", "deleted_at", "deleted_by"] if hasattr(obj, f)]
+        obj.save(update_fields=fields)
+
         return Response({"detail": "Registro restaurado."}, status=status.HTTP_200_OK)

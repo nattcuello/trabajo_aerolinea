@@ -1,4 +1,4 @@
-# pasajeros/views_api.py
+""" # pasajeros/views_api.py
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from core.viewsets import SoftDeleteModelViewSet
@@ -12,3 +12,4 @@ class PasajeroViewSet(SoftDeleteModelViewSet):
     filterset_fields = ["tipo_documento", "documento", "email", "is_active"]
     search_fields = ["nombre", "documento", "email", "telefono"]
     ordering_fields = ["nombre", "documento", "email", "id"]
+ """

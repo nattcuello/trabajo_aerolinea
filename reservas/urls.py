@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views_api import AsientoViewSet, AsientoVueloViewSet, ReservaViewSet
+from api.views_reservas import AsientoViewSet, AsientoVueloViewSet, ReservaViewSet
 
 app_name = "reservas"
 

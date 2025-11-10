@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from products.models import Costumer
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -23,9 +23,4 @@ class UserSerializer(serializers.ModelSerializer):
         else:
             user.set_password(User.objects.make_random_password())
         user.save()
-        Customer.objects.create(
-            name = user.first_name,
-            email = user.email
-            phone = None
-        )
         return user

@@ -16,7 +16,7 @@ urlpatterns = [
     path("usuarios/", include(("usuarios.urls", "usuarios"), namespace="usuarios")),
 
     # API central (router DRF + sub-API de usuarios + token)
-    path("api/", include("trabajo_aerolineas.api_urls")),
+    path("api/", include("api.urls")),
 
     # exponer la documentación
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
